@@ -31,7 +31,7 @@ module.exports = (function() {
 			master = require('./master');
 
 		if (config.useCluster && cluster.isMaster) {
-			master.init(config.workers, log);
+			master(config.workers, log);
 			return;
 		}
 
