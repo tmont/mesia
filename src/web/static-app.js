@@ -27,6 +27,7 @@ module.exports = (function() {
 			path = require('path'),
 			http = require('http'),
 			fs = require('fs'),
+			mime = require('mime'),
 			log = require('../logger').create(config.log),
 			master = require('./master');
 
@@ -96,6 +97,7 @@ module.exports = (function() {
 
 							res.setHeader('Content-Length', stat.size);
 							res.setHeader('Last-Modified', mtime);
+							res.setHeader('Content-Type', mime.lookup(physicalFile));
 
 							fs.createReadStream(physicalFile).pipe(res);
 						});

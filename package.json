@@ -12,7 +12,8 @@
 		"jade": "0.35.0",
 		"winston": "0.7.2",
 		"dateformat": "1.0.6-1.2.3",
-		"async": "0.2.9"
+		"async": "0.2.9",
+		"mime": "1.2.11"
 	},
 
 	"devDependencies": {}
