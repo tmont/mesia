@@ -103,14 +103,20 @@ module.exports = (function() {
 
 					break;
 				case 'css':
-					cssCompiler.compileFile(fileName, function(err, css) {
+					cssCompiler.compileFile(fileName, function(err, result) {
 						if (err) {
 							sendError(err.code === 'ENOENT' ? 404 : 500, err);
 							return;
 						}
 
+						if (result.cache) {
+							res.statusCode = 304;
+							res.end();
+							return;
+						}
+
 						res.setHeader('Content-Type', 'text/css');
-						res.write(css);
+						res.write(result.css);
 						res.end();
 					});
 					break;

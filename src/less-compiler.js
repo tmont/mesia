@@ -15,7 +15,7 @@ LessCompiler.prototype = {
 			self = this;
 
 		if (this.useCache && this.cache[realFile]) {
-			callback(null, this.cache[realFile]);
+			callback(null, { css: this.cache[realFile], cache: true });
 			return;
 		}
 
@@ -30,7 +30,7 @@ LessCompiler.prototype = {
 					self.cache[realFile] = result;
 				}
 
-				callback(err, result);
+				callback(err, { css: result, cache: false });
 			});
 		});
 	},
