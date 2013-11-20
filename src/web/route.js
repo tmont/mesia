@@ -88,23 +88,23 @@ Route.prototype = {
 	}
 };
 
-Route.createLocals = function(config, routes) {
+Route.createLocals = function(config, routes, buildPath) {
 	return {
 		url: {
 			image: function(file) {
-				return [ config.staticBasePath, 'images', file ].join('/');
+				return buildPath([ config.staticBasePath, 'images', file ]);
 			},
 			js: function(file) {
-				return [ config.staticBasePath, 'js', file ].join('/');
+				return buildPath([ config.staticBasePath, 'js', file ]);
 			},
 			font: function(file) {
-				return [ config.staticBasePath, 'fonts', file ].join('/');
+				return buildPath([ config.staticBasePath, 'fonts', file ]);
 			},
 			css: function(file) {
-				return [ config.staticBasePath, 'css', file ].join('/');
+				return buildPath([ config.staticBasePath, 'css', file ]);
 			},
 			template: function(file) {
-				return [ config.staticBasePath, 'templates', file ].join('/');
+				return buildPath([ config.staticBasePath, 'templates', file ]);
 			},
 			route: function(name, values) {
 				var route = routes[name];
