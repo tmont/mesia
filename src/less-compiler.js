@@ -34,7 +34,7 @@ LessCompiler.prototype = {
 					};
 				}
 
-				callback(err, { css: css, mtime: cached && cached.mtime });
+				callback(err, { value: css, mtime: cached && cached.mtime });
 			});
 		});
 	},
