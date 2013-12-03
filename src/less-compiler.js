@@ -12,10 +12,11 @@ function LessCompiler(root, paths, options) {
 LessCompiler.prototype = {
 	compileFile: function(file, callback) {
 		var realFile = path.join(this.root, file.replace(/\.css$/, '.less')),
-			self = this;
+			self = this,
+			cached = this.cache[realFile];
 
-		if (this.useCache && this.cache[realFile]) {
-			callback(null, { css: this.cache[realFile], cache: true });
+		if (this.useCache && cached) {
+			callback(null, cached);
 			return;
 		}
 
@@ -25,12 +26,15 @@ LessCompiler.prototype = {
 				return;
 			}
 
-			self.compile(contents, function(err, result) {
+			self.compile(contents, function(err, css) {
 				if (!err && self.useCache) {
-					self.cache[realFile] = result;
+					cached = self.cache[realFile] = {
+						value: css,
+						mtime: new Date()
+					};
 				}
 
-				callback(err, { css: result, cache: false });
+				callback(err, { css: css, mtime: cached && cached.mtime });
 			});
 		});
 	},
