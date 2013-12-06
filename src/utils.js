@@ -7,7 +7,7 @@ exports.camelize = function(string) {
 };
 
 exports.formatDate = function(date, format) {
-	return formatDate(date, format || 'yyyy-mm-dd HH:MM:ss');
+	return formatDate(date, format || 'UTC:yyyy-mm-dd HH:MM:ss');
 };
 
 //http://phpjs.org/functions/number_format/
