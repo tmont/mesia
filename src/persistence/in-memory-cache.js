@@ -4,21 +4,16 @@ function InMemoryCache() {
 
 InMemoryCache.prototype = {
 	get: function(key, callback) {
-		var value = this.items[key] || null,
-			stats = {
-				miss: !(key in this.items),
-				expired: false
-			};
+		var item = this.items[key] || {},
+			miss = !(key in this.items);
 
-		if (!stats.miss && value.expiry.getTime() > Date.now()) {
-			stats.miss = true;
-			stats.expired = true;
-			value = null;
+		if (!miss && item.expiry.getTime() > Date.now()) {
+			item = {};
 			delete this.items[key];
 		}
 
 		process.nextTick(function() {
-			callback(null, value, stats);
+			callback(null, item.value);
 		});
 	},
 
@@ -33,6 +28,11 @@ InMemoryCache.prototype = {
 				callback(null, item);
 			});
 		}
+	},
+
+	invalidate: function(key, callback) {
+		delete this.items[key];
+		process.nextTick(callback);
 	}
 };
 

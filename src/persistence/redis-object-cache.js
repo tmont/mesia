@@ -21,6 +21,10 @@ RedisObjectCache.prototype = {
 
 	set: function(key, value, expiry, callback) {
 		this.cache.set(key, JSON.stringify(value), expiry, callback);
+	},
+
+	invalidate: function(key, callback) {
+		this.cache.invalidate(key, callback);
 	}
 };
 
