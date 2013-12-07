@@ -1,15 +1,14 @@
-var mysql = require('mysql'),
-	EventEmitter = require('events').EventEmitter,
+var EventEmitter = require('events').EventEmitter,
 	util = require('util');
 
-function MySqlQueryExecutor(/** DbConnection */conn, /**Logger */log) {
+function QueryExecutor(/** DbConnection */conn, /**Logger */log) {
 	this.conn = conn;
 	this.log = log;
 }
 
-util.inherits(MySqlQueryExecutor, EventEmitter);
+util.inherits(QueryExecutor, EventEmitter);
 
-MySqlQueryExecutor.prototype.execute = function(query, callback) {
+QueryExecutor.prototype.execute = function(query, callback) {
     var self = this,
         start = Date.now();
 
@@ -45,4 +44,4 @@ MySqlQueryExecutor.prototype.execute = function(query, callback) {
 	this.conn.query.apply(this.conn, args);
 };
 
-module.exports = MySqlQueryExecutor;
+module.exports = QueryExecutor;
