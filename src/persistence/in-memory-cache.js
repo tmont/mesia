@@ -32,7 +32,7 @@ InMemoryCache.prototype = {
 
 	invalidate: function(key, callback) {
 		delete this.items[key];
-		process.nextTick(callback);
+		callback && process.nextTick(callback);
 	}
 };
 

@@ -1,10 +1,17 @@
-function RedisCache(/** RedisClient */client) {
+function logError(log) {
+	return function(err) {
+		err && log.error('Redis error', err);
+	}
+}
+
+function RedisCache(/** RedisClient */client, /** Logger */log) {
 	this.client = client;
+	this.log = log;
 }
 
 RedisCache.prototype = {
 	get: function(key, callback) {
-		this.client.get(key, callback);
+		this.client.get(key, callback || logError(this.log));
 	},
 
 	set: function(key, value, expiry, callback) {
@@ -15,11 +22,11 @@ RedisCache.prototype = {
 			return;
 		}
 
-		this.client.setex(key, ttl, value, callback);
+		this.client.setex(key, ttl, value, callback || logError(this.log));
 	},
 
 	invalidate: function(key, callback) {
-		this.client.del(key, callback);
+		this.client.del(key, callback || logError(this.log));
 	}
 };
 
