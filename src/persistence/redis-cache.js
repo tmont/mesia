@@ -9,7 +9,7 @@ RedisCache.prototype = {
 
 	set: function(key, value, expiry, callback) {
 		expiry = expiry || new Date(Date.now() + 86400000);
-		var ttl = Math.round((Date.now() - expiry.getTime()) / 1000);
+		var ttl = Math.round((expiry.getTime() - Date.now()) / 1000);
 		this.client.setex(key, ttl, value, callback);
 	}
 };
