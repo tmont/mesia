@@ -2,6 +2,7 @@
 	"name": "mesia",
 	"version": "0.0.10",
 	"author": "Tommy Montgomery <tmont@tmont.com>",
+	"description": "Utilities for web apps",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/tmont/mesia.git"
@@ -14,7 +15,5 @@
 		"dateformat": "1.0.6-1.2.3",
 		"async": "0.2.9",
 		"mime": "1.2.11"
-	},
-
-	"devDependencies": {}
+	}
 }
