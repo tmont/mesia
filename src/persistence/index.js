@@ -1,5 +1,7 @@
 module.exports = {
 	Entity: require('./entity'),
 	QueryExecutor: require('./query-executor'),
-	Repository: require('./repository')
+	Repository: require('./repository'),
+	InMemoryCache: require('./in-memory-cache'),
+	RedisCache: require('./redis-cache')
 };
