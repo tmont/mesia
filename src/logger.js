@@ -70,7 +70,6 @@ Logger.create = function(config) {
 	var logger = new winston.Logger({
 		level: config.level,
 		levels: Logger.levels,
-		stripColors: config.transports && config.transports.indexOf('syslog') !== -1,
 		transports: transports
 	});
 

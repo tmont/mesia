@@ -30,8 +30,10 @@ util._extend(SyslogTransport.prototype, {
 		if (typeof(meta) === 'string') {
 			message += ' ' + meta;
 		} else if (meta && typeof(meta) === 'object' && Object.keys(meta).length > 0) {
-			message += ' ' + util.inspect(meta, false, null, true);
+			message += ' ' + util.inspect(meta, false, null, false);
 		}
+
+		message = message.replace(/\u001b\[(\d+(;\d+)*)?m/g, '');
 
 		var options = {
 			cons: true,
