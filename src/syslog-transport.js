@@ -25,7 +25,13 @@ util._extend(SyslogTransport.prototype, {
 		} else if (level === 'warn') {
 			level = 'warning';
 		}
-		var message = '[' + level + '] ' + msg + (meta ? ' ' + util.inspect(meta, false, null, true) : '');
+
+		var message = '[' + level + '] ' + msg;
+		if (typeof(meta) === 'string') {
+			message += ' ' + meta;
+		} else if (meta && typeof(meta) === 'object' && Object.keys(meta).length > 0) {
+			message += ' ' + util.inspect(meta, false, null, true);
+		}
 
 		var options = {
 			cons: true,
