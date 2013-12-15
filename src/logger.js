@@ -29,26 +29,32 @@ Logger.colors = {
 
 winston.addColors(Logger.colors);
 
+Logger.createConsoleTransport = function(config) {
+	return new winston.transports.Console({
+		timestamp: config.timestamps === 'verbose' ? true : function() {
+			var date = new Date(),
+				ms = date.getMilliseconds().toString();
+			ms = ms + new Array((3 - ms.length + 1)).join('0');
+			return [ date.getHours(), date.getMinutes(), date.getSeconds() ]
+				.map(function(value) {
+					return value < 10 ? '0' + value : value;
+				})
+				.join(':') + '.' + ms;
+		},
+		level: config.level,
+		colorize: true
+	});
+};
+
 Logger.create = function(config) {
+	var transports = config.transports || [
+		Logger.createConsoleTransport(config)
+	];
+
 	var logger = new winston.Logger({
 		level: config.level,
 		levels: Logger.levels,
-		transports: [
-			new winston.transports.Console({
-				timestamp: config.timestamps === 'verbose' ? true : function() {
-					var date = new Date(),
-						ms = date.getMilliseconds().toString();
-					ms = ms + new Array((3 - ms.length + 1)).join('0');
-					return [ date.getHours(), date.getMinutes(), date.getSeconds() ]
-						.map(function(value) {
-							return value < 10 ? '0' + value : value;
-						})
-						.join(':') + '.' + ms;
-				},
-				level: config.level,
-				colorize: true
-			})
-		]
+		transports: transports
 	});
 
 	return new Logger(logger, config);
