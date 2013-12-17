@@ -33,7 +33,14 @@ module.exports = function(container) {
 							type: 'website'
 						}
 					};
-					res.render('errors/' + view, locals);
+					res.render('errors/' + view, locals, function(err, str) {
+						if (err) {
+							log.error('Error rendering error view', err);
+							res.send('');
+						} else {
+							res.send(str);
+						}
+					});
 				} catch (e) {
 					log.error('error rendering error view', e);
 					res.send('NOPE.');
