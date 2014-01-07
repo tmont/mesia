@@ -34,6 +34,11 @@ Entity.inherit = function(ctor) {
 	Object.defineProperty(ctor, 'prefix', {
 		value: '_' + utils.camelize(ctor.name) + '_'
 	});
+
+	ctor.fromQueryResult = function(data, prefix) {
+		var dto = Entity.mapValues(data, prefix || ctor.prefix);
+		return new ctor(dto);
+	};
 };
 
 Entity.mapValues = function(data, prefix) {
