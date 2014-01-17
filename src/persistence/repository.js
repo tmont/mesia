@@ -1,11 +1,24 @@
-function Repository(executor, type) {
+function Repository(executor, type, validatorFactory) {
 	this.executor = executor;
 	this.type = type;
+	this.validatorFactory = validatorFactory;
 }
 
 Repository.prototype = {
 	validate: function(entity, callback) {
-		callback && callback();
+		if (!this.validatorFactory) {
+			callback();
+			return;
+		}
+
+		this.validatorFactory(this.type, function(err, validator) {
+			if (err || !validator) {
+				callback(err);
+				return;
+			}
+
+			validator.validate(entity, callback);
+		});
 	},
 
 	save: function(entity, callback) {
