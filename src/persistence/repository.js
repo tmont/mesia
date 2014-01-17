@@ -21,17 +21,23 @@ Repository.prototype = {
 		});
 	},
 
-	save: function(entity, callback) {
-		var self = this;
-		var query = entity.id ? this.getUpdateQuery(entity) : this.getInsertQuery(entity);
+	save: function(entity, options, callback) {
+		if (typeof(options) === 'function') {
+			callback = options;
+			options = {};
+		}
 
+		var self = this,
+			isTransient = !entity.id;
+
+		var query = !isTransient ? this.getUpdateQuery(entity) : this.getInsertQuery(entity);
 		this.validate(entity, function(err) {
 			if (err) {
 				callback && callback(err);
 				return;
 			}
 
-			self.executor.execute(query, function(err, result) {
+			self.execute(query, options, function(err, result) {
 				if (err) {
 					callback && callback(err);
 					return;
@@ -46,14 +52,12 @@ Repository.prototype = {
 		});
 	},
 
-	del: function(entity, callback) {
-		this.executor.execute(this.getDeleteQuery(entity), function(err) {
-			callback && callback(err);
-		});
+	del: function(entity, options, callback) {
+		this.executor.execute(this.getDeleteQuery(entity), options, callback);
 	},
 
-	load: function(id, callback) {
-		this.executeAndCreateEntity(this.getLoadQuery(id), callback);
+	load: function(id, options, callback) {
+		this.executeAndCreateEntity(this.getLoadQuery(id), options, callback);
 	},
 
 	getUpdateQuery: function(entity) {
@@ -80,9 +84,27 @@ Repository.prototype = {
 		return this.type.fromQueryResult(queryResult, null);
 	},
 
-	executeAndCreateEntity: function(query, callback) {
+	execute: function(query, options, callback) {
+		if (typeof(options) === 'function') {
+			callback = options;
+			options = {};
+		}
+
+		if (options.name) {
+			query._name = options.name;
+		}
+
+		this.executor.execute(query, callback);
+	},
+
+	executeAndCreateEntity: function(query, options, callback) {
+		if (typeof(options) === 'function') {
+			callback = options;
+			options = {};
+		}
+
 		var self = this;
-		this.executor.execute(query, function(err, results) {
+		this.execute(query, options, function(err, results) {
 			if (err) {
 				callback(err);
 				return;
@@ -97,9 +119,14 @@ Repository.prototype = {
 		});
 	},
 
-	executeAndMapEntity: function(query, callback) {
+	executeAndMapEntity: function(query, options, callback) {
+		if (typeof(options) === 'function') {
+			callback = options;
+			options = {};
+		}
+
 		var self = this;
-		this.executor.execute(query, function(err, results) {
+		this.execute(query, options, function(err, results) {
 			if (err) {
 				callback(err);
 				return;
@@ -108,6 +135,7 @@ Repository.prototype = {
 			callback(null, results.map(self.createEntity.bind(self)));
 		});
 	}
+
 };
 
 module.exports = Repository;
