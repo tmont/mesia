@@ -9,14 +9,24 @@ function QueryExecutor(/** DbConnection */conn, /**Logger */log) {
 util.inherits(QueryExecutor, EventEmitter);
 
 QueryExecutor.prototype.execute = function(query, callback) {
-    var self = this,
-        start = Date.now();
+	var self = this,
+		start = Date.now(),
+		name = query._name || '';
 
-    this.emit('querying', query);
-	function queryCallback(err) {
+	this.emit('querying', query);
+	function queryCallback(err, result) {
+		var summary = '';
+		if (result) {
+			summary = Array.isArray(result)
+				? result.length + ' row' + (result.length === 1 ? '' : 's') + ' returned'
+				: result.affectedRows + ' row' + (result.affectedRows === 1 ? '' : 's') + ' affected';
+		}
+
 		self.emit('queried', {
 			query: query,
-			elapsed: Date.now() - start
+			name: name,
+			elapsed: Date.now() - start,
+			summary: summary
 		});
 
 		if (err) {
