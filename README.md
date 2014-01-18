@@ -9,6 +9,7 @@ A collection of commonly-used utilities for web apps built with one or more of:
 - [Winston](https://github.com/flatiron/winston)
 - [Less](http://lesscss.org/)
 - [Redis](http://redis.io/)
+- [Memcached](http://memcached.org/)
 - some sort of SQL database
 
 Basically I was copypasting a lot of code around for every new node app I created,
