@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/tmont/mesia.png)](https://travis-ci.org/tmont/mesia)
+
 A collection of commonly-used utilities for web apps built with one or more of:
 
 - [Sahara](https://github.com/tmont/sahara)
