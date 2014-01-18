@@ -1,6 +1,6 @@
 {
 	"name": "mesia",
-	"version": "0.0.27",
+	"version": "0.0.28",
 	"author": "Tommy Montgomery <tmont@tmont.com>",
 	"description": "Utilities for web apps",
 	"repository": {
@@ -16,12 +16,10 @@
 		"posix": "1.0.3",
 		"mime": "1.2.11"
 	},
-
 	"devDependencies": {
 		"mocha": "1.17.0",
 		"should": "3.0.1"
 	},
-
 	"scripts": {
 		"test": "./node_modules/.bin/mocha -R spec tests"
 	}
