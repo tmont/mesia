@@ -45,7 +45,13 @@ JadeCompiler.prototype = {
 		}
 
 		try {
-			callback(null, jade.compile(source, options));
+			if (options.client) {
+				// deal with jade 1.1.x deprecation of client option
+				delete options.client;
+				callback(null, jade.compileClient(source, options));
+			} else {
+				callback(null, jade.compile(source, options));
+			}
 		} catch (e) {
 			callback(e);
 		}
