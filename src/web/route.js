@@ -10,7 +10,7 @@ function replaceValues(subject, values) {
 			//this comes from the express router
 			for (var name in values) {
 				subject = subject.replace(
-					new RegExp(':' + name + '\\??', 'gi'),
+					new RegExp(':' + name + '\\b\\??', 'gi'),
 					values[name]
 				);
 			}
