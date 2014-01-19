@@ -3,6 +3,7 @@ var less = require('less'),
 	path = require('path');
 
 function LessCompiler(root, paths, options) {
+	options = options || {};
 	this.root = root;
 	this.cache = {};
 	this.useCache = !!options.useCache;
