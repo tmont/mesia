@@ -25,7 +25,9 @@ module.exports = function(key, dbKey) {
 						if (typeof(data.query) !== 'string') {
 							query = data.query.text + ' :: ' + util.inspect(data.query.values);
 						}
-						var message = 'SQL[' + data.elapsed + 'ms]\n' + '\x1B[34m' + query + '\x1B[39m';
+						var header = data.name ? '\x1B[35m' + data.name + '\x1B[39m' : 'SQL';
+						var message = header + '[' + data.elapsed + 'ms]\n' + '\x1B[34m' + query + '\x1B[39m';
+						message += ' ' + '\x1B[33m' + data.summary + '\x1B[39m';
 						log.debug(message);
 					});
 				}
