@@ -124,4 +124,62 @@ describe('Entity', function() {
 			entity1.equals(null).should.equal(false);
 		});
 	});
+
+	describe('DTO mapping', function() {
+		function Foo() {
+			this.hello = 'world';
+			this.bar = new Bar();
+			this.getDtoProperties = function() {
+				return [
+					'hello',
+					'bar',
+					{ key: 'foo', value: 'bar' },
+					{ key: 'baz', value: function() { return 'lolz'; } }
+				];
+			};
+		}
+
+		function Bar() {
+			this.id = 'bar';
+			this.getDtoProperties = function() {
+				return [ 'id' ];
+			};
+		}
+		Entity.inherit(Foo);
+		Entity.inherit(Bar);
+
+		it('should map simple property', function() {
+			var dto = new Foo().toDto();
+			dto.should.have.property('hello', 'world');
+		});
+
+		it('should map entity', function() {
+			var dto = new Foo().toDto();
+			dto.bar.should.eql({ id: 'bar' });
+		});
+
+		it('should map custom key and value', function() {
+			var dto = new Foo().toDto();
+			dto.should.have.property('foo', 'bar');
+		});
+
+		it('should map custom key with function', function() {
+			var dto = new Foo().toDto();
+			dto.should.have.property('baz', 'lolz');
+		});
+
+		it('should use DTO for serialization', function() {
+			var toDtoCalled = 0;
+			function Foo() {
+				this.toDto = function() {
+					toDtoCalled++;
+				};
+			}
+
+			Entity.inherit(Foo);
+
+			new Foo().toJSON();
+			toDtoCalled.should.equal(1);
+		});
+	});
 });

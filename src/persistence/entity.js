@@ -13,6 +13,40 @@ Entity.prototype = {
 		var equal = other && this.id && other.id === this.id
 			&& other instanceof this.constructor;
 		return !!equal;
+	},
+
+	toJSON: function() {
+		return this.toDto();
+	},
+
+	toDto: function() {
+		var map = this.getDtoProperties(),
+			dto = {},
+			key,
+			value;
+
+		for (var i = 0; i < map.length; i++) {
+			key = map[i];
+			if (key in this) {
+				value = this[key];
+				dto[key] = value && typeof(value.toDto) === 'function' ? value.toDto() : value;
+			} else if (key && typeof(key) === 'object') {
+				value = key.value;
+				key = key.key;
+				if (key) {
+					if (typeof(value) === 'function') {
+						value = value();
+					}
+					dto[key] = value;
+				}
+			}
+		}
+
+		return dto;
+	},
+
+	getDtoProperties: function() {
+		return [];
 	}
 };
 
