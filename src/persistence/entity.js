@@ -1,18 +1,18 @@
 var util = require('util'),
 	utils = require('../utils');
 
-function Entity() {
-}
+function Entity() {}
 
 Entity.prototype = {
 	equals: function(other) {
 		if (!('id' in this)) {
 			//must override equals for entities without an "id" field
-			throw new Error(this.constructor.name + ' does not have an "id" field');
+			return false;
 		}
 
-		return other && this.id && other.id === this.id
+		var equal = other && this.id && other.id === this.id
 			&& other instanceof this.constructor;
+		return !!equal;
 	}
 };
 
@@ -44,10 +44,11 @@ Entity.inherit = function(ctor) {
 };
 
 Entity.mapValues = function(data, prefix) {
+	prefix = prefix || '';
 	var values = {};
 	Object.keys(data)
 		.filter(function(key) {
-			return key.indexOf(prefix) === 0;
+			return !prefix || key.indexOf(prefix) === 0;
 		})
 		.forEach(function(key) {
 			var newKey = utils.camelize(key.substring(prefix.length));
