@@ -51,7 +51,7 @@ Entity.prototype = {
 };
 
 Entity.inherit = function(ctor, parent) {
-  parent = parent || Entity;
+	parent = parent || Entity;
 
 	util.inherits(ctor, parent);
 	ctor.create = function(jsonOrEntity) {
