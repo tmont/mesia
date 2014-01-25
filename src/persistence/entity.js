@@ -50,8 +50,10 @@ Entity.prototype = {
 	}
 };
 
-Entity.inherit = function(ctor) {
-	util.inherits(ctor, Entity);
+Entity.inherit = function(ctor, parent) {
+  parent = parent || Entity;
+
+	util.inherits(ctor, parent);
 	ctor.create = function(jsonOrEntity) {
 		if (Array.isArray(jsonOrEntity)) {
 			//to catch bonehead mistakes
