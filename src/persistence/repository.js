@@ -1,6 +1,7 @@
-function Repository(executor, type, validatorFactory) {
+function Repository(executor, type, cache, validatorFactory) {
 	this.executor = executor;
 	this.type = type;
+	this.cache = cache;
 	this.validatorFactory = validatorFactory;
 }
 
@@ -133,6 +134,35 @@ Repository.prototype = {
 			}
 
 			callback(null, results.map(self.createEntity.bind(self)));
+		});
+	},
+
+	useCache: function(cacheKey, onMiss, onHit, expiry, done) {
+		var self = this,
+			start = Date.now();
+		this.cache.get(cacheKey, function(err, json) {
+			if (json) {
+				self.cache.log.debug('cache hit: ' + cacheKey + ' [' + (Date.now() - start) + 'ms]');
+				onHit(json, done);
+				return;
+			}
+
+			if (err) {
+				self.cache.log.error(err);
+			}
+
+			onMiss(function(err, result) {
+				if (err) {
+					done(err);
+					return;
+				}
+
+				var cacheable = result && typeof(result.toDto) === 'function' ? result.toDto() : result;
+				self.cache.set(cacheKey, cacheable, expiry, function(err) {
+					err && self.cache.log.error(err);
+					done(null, result);
+				});
+			});
 		});
 	}
 
