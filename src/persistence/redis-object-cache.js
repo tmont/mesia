@@ -1,5 +1,6 @@
 function RedisObjectCache(/** RedisCache */cache) {
 	this.cache = cache;
+	this.log = this.cache.log;
 }
 
 RedisObjectCache.prototype = {
