@@ -144,18 +144,32 @@ util._extend(Repository.prototype, {
 		});
 	},
 
-	useCache: function(cacheKey, onMiss, onHit, expiry, done) {
+	useCache: function(cacheKey, onMiss, onHit, ttl, done) {
+		if (typeof(ttl) === 'function') {
+			done = ttl;
+			ttl = null;
+		}
+
 		var self = this,
 			start = Date.now();
 		this.cache.get(cacheKey, function(err, json) {
+			var elapsed = (Date.now() - start);
 			if (json) {
-				self.cache.log.debug('cache hit: ' + cacheKey + ' [' + (Date.now() - start) + 'ms]');
+				self.cache.log.debug(
+					'cache \x1B[32mhit\x1B[39m: \x1B[33m' + cacheKey +
+					'\x1B[39m [' + elapsed + 'ms]'
+				);
 				onHit(json, done);
 				return;
 			}
 
 			if (err) {
 				self.cache.log.error(err);
+			} else {
+				self.cache.log.debug(
+					'cache \x1B[31mmiss\x1B[39m: \x1B[33m' + cacheKey +
+					'\x1B[39m [' + elapsed + 'ms]'
+				);
 			}
 
 			onMiss(function(err, result) {
@@ -165,7 +179,7 @@ util._extend(Repository.prototype, {
 				}
 
 				var cacheable = result && typeof(result.toDto) === 'function' ? result.toDto() : result;
-				self.cache.set(cacheKey, cacheable, expiry, function(err) {
+				self.cache.set(cacheKey, cacheable, ttl, function(err) {
 					err && self.cache.log.error(err);
 					done(null, result);
 				});

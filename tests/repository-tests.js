@@ -13,6 +13,7 @@ describe('Repository', function() {
 			result = {};
 
 		var cache = {
+			log: { debug: function() {} },
 			get: function(key, callback) {
 				gets++;
 				key.should.equal('asdf');
@@ -38,7 +39,7 @@ describe('Repository', function() {
 			callback(null, json);
 		}
 
-		new Repository({}, Foo, cache).useCache(key, onMiss, onHit, null, function(err, entity) {
+		new Repository({}, Foo, cache).useCache(key, onMiss, onHit, function(err, entity) {
 			should.not.exist(err);
 			entity.should.equal(result);
 			missed.should.equal(1);

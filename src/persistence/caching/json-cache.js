@@ -3,6 +3,7 @@
  */
 function JsonCache(/** CacheClient */client) {
 	this.client = client;
+	this.log = client.log;
 }
 
 JsonCache.prototype = {
