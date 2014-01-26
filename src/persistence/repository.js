@@ -11,7 +11,7 @@ function Repository(executor, type, cache, validatorFactory) {
 
 util.inherits(Repository, EventEmitter);
 
-Repository.prototype = {
+util._extend(Repository.prototype, {
 	validate: function(entity, callback) {
 		if (!this.validatorFactory) {
 			callback();
@@ -172,6 +172,6 @@ Repository.prototype = {
 			});
 		});
 	}
-};
+});
 
 module.exports = Repository;
