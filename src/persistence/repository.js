@@ -1,9 +1,15 @@
+var EventEmitter = require('events').EventEmitter,
+	util = require('util');
+
 function Repository(executor, type, cache, validatorFactory) {
+	EventEmitter.call(this);
 	this.executor = executor;
 	this.type = type;
 	this.cache = cache;
 	this.validatorFactory = validatorFactory;
 }
+
+util.inherits(Repository, EventEmitter);
 
 Repository.prototype = {
 	validate: function(entity, callback) {
@@ -48,6 +54,7 @@ Repository.prototype = {
 					entity.id = result.insertId;
 				}
 
+				self.emit('saved', entity);
 				callback && callback(null, entity);
 			});
 		});
@@ -165,7 +172,6 @@ Repository.prototype = {
 			});
 		});
 	}
-
 };
 
 module.exports = Repository;
