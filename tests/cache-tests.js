@@ -234,6 +234,38 @@ describe('Caching', function() {
 			});
 		});
 
+		it('should invalidate multiple keys for entity', function(done) {
+			function Foo() {
+			}
+
+			var mapping = {
+				Foo: function(entity) {
+					entity.should.be.instanceOf(Foo);
+					maps++;
+					return [ 'foo', 'bar' ];
+				}
+			};
+
+			var invalidates = 0;
+			var maps = 0;
+			var client = {
+				invalidate: function(key, callback) {
+					invalidates++;
+					key.should.equal(invalidates === 1 ? 'foo' : 'bar');
+					callback();
+				}
+			};
+
+			var invalidator = new caching.CacheInvalidator(mapping, client);
+			invalidator.invalidate(new Foo(), function(err, result) {
+				should.not.exist(err);
+				result.should.have.property('invalidated', true);
+				invalidates.should.equal(2);
+				maps.should.equal(1);
+				done();
+			});
+		});
+
 		it('should handle non-mapped entity', function(done) {
 			function Foo() {}
 
