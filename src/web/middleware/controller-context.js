@@ -68,7 +68,10 @@ module.exports = function(parentContainer, libs) {
 
 			doRender: function(viewName, locals, route, status, send, goaOptions) {
 				locals = locals || {};
-				var response = { info: route ? route.getInfo(locals) : {} };
+				var response = {
+					info: route ? route.getInfo(locals) : {},
+					viewData: locals.viewData || {}
+				};
 
 				locals.info = response.info;
 
