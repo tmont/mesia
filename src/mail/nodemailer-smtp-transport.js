@@ -2,8 +2,8 @@ var mail = require('nodemailer'),
 	util = require('util'),
 	SmtpTransport = require('./smtp-transport');
 
-function NodeMailerSmtpTransport(/** SmtpConfig */config) {
-	SmtpTransport.call(this);
+function NodeMailerSmtpTransport(/** SmtpConfig */config, /** MailTemplatesDir */templatesDir) {
+	SmtpTransport.call(this, templatesDir);
 	this.transport = mail.createTransport('SMTP', config);
 }
 
