@@ -2,7 +2,7 @@ var mail = require('nodemailer'),
   util = require('util'),
   MailTransport = require('./mail-transport');
 
-function NodeMailerPickupTransport(/** SmtpConfig */config, /** MailTemplatesDir */templatesDir) {
+function NodeMailerPickupTransport(/** PickupConfig */config, /** MailTemplatesDir */templatesDir) {
   MailTransport.call(this, templatesDir);
   this.transport = mail.createTransport('PICKUP', config);
 }
