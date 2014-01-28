@@ -6,12 +6,12 @@ function addressToArray(address) {
 		});
 }
 
-function SmtpTransport(templatesDir) {
+function MailTransport(templatesDir) {
 	this.templatesDir = templatesDir || null;
 	this.tmpl = null;
 }
 
-SmtpTransport.prototype = {
+MailTransport.prototype = {
 	evaluateTemplate: function(template, locals, callback) {
 		var self = this;
 		if (!this.tmpl) {
@@ -99,4 +99,4 @@ SmtpTransport.prototype = {
 	sendMail: function(message, callback) { }
 };
 
-module.exports = SmtpTransport;
+module.exports = MailTransport;

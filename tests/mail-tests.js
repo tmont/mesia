@@ -1,10 +1,13 @@
 var should = require('should'),
-	mail = require('../').mail;
+	mail = require('../').mail,
+  async = require('async'),
+  fs = require('fs'),
+  path = require('path');
 
 describe('Mail', function() {
 	it('should compose message object with string body', function(done) {
 		var sendMail = 0;
-		var transport = new mail.SmtpTransport();
+		var transport = new mail.MailTransport();
 		transport.sendMail = function(message, callback) {
 			sendMail++;
 			message.should.have.property('from', 'foo@bar.com');
@@ -24,7 +27,7 @@ describe('Mail', function() {
 
 	it('should compose message object with object body with html', function(done) {
 		var sendMail = 0;
-		var transport = new mail.SmtpTransport();
+		var transport = new mail.MailTransport();
 		transport.sendMail = function(message, callback) {
 			sendMail++;
 			message.should.have.property('from', 'foo@bar.com');
@@ -50,7 +53,7 @@ describe('Mail', function() {
 
 	it('should normalize comma-separated addresses to array', function(done) {
 		var sendMail = 0;
-		var transport = new mail.SmtpTransport();
+		var transport = new mail.MailTransport();
 		transport.sendMail = function(message, callback) {
 			sendMail++;
 			message.should.have.property('from', 'foo@bar.com');
@@ -77,7 +80,7 @@ describe('Mail', function() {
 		].forEach(function(option) {
 			it('should set ' + option + ' on message', function(done) {
 				var sendMail = 0;
-				var transport = new mail.SmtpTransport();
+				var transport = new mail.MailTransport();
 				transport.sendMail = function(message, callback) {
 					sendMail++;
 					message.should.have.property('from', 'x@y.com');
@@ -105,7 +108,7 @@ describe('Mail', function() {
 		].forEach(function(option) {
 			it('should set ' + option + ' on message', function(done) {
 				var sendMail = 0;
-				var transport = new mail.SmtpTransport();
+				var transport = new mail.MailTransport();
 				transport.sendMail = function(message, callback) {
 					sendMail++;
 					message.should.have.property('from', 'x@y.com');
@@ -129,7 +132,7 @@ describe('Mail', function() {
 	describe('with templating', function() {
 		it('should generate body via template', function(done) {
 			var sendMail = 0;
-			var transport = new mail.SmtpTransport(__dirname + '/mail/templates');
+			var transport = new mail.MailTransport(__dirname + '/mail/templates');
 			transport.sendMail = function(message, callback) {
 				sendMail++;
 				message.should.have.property('from', 'foo@bar.com');
@@ -162,6 +165,74 @@ describe('Mail', function() {
 		});
 	});
 
+  describe('with NodemailerPickupTransport', function() {
+
+    var pickupDir = path.join(__dirname, 'pickup');
+
+    before(function(done) {
+      fs.exists(pickupDir, function(exists) {
+        if (!exists) {
+          fs.mkdir(pickupDir, function(err) {
+            done(err);
+          });
+          return;
+        }
+
+        done();
+      });
+    });
+
+    it('should send email with pickup transport', function(done) {
+      var config = {
+        directory: pickupDir
+      };
+
+      var mailer = new mail.NodeMailerPickupTransport(config, __dirname + '/mail/templates');
+      var options = {
+        template: 'basic',
+        locals: {
+          hello: 'Well hello there, ',
+          name: 'Tommy Boy'
+        }
+      };
+      mailer.send('tommy.mont@gmail.com', 'tmont@tmont.com', 'Testing nodemailer', options, function(err, email) {
+        should.not.exist(err);
+        should.exist(email);
+
+        fs.exists(email.path, function(exists) {
+          should.exist(exists);
+          done();
+        });
+      });
+    });
+
+    after(function(done) {
+      fs.exists(pickupDir, function(exists) {
+        if (exists) {
+          fs.readdir(pickupDir, function(err, files) {
+            if (err) {
+              done(err);
+              return;
+            }
+
+            async.forEach(files, function(file, next) {
+              fs.unlink(path.join(pickupDir, file), next);
+            }, function(err) {
+              if (err) {
+                done(err);
+                return;
+              }
+              fs.rmdir(pickupDir, done);
+            });
+          });
+          return;
+        }
+
+        done();
+      });
+    });
+  });
+
 	function testNodeMailer() {
 		var config = {
 			service: 'Gmail',
@@ -181,7 +252,7 @@ describe('Mail', function() {
 				}
 			};
 			mailer.send('tommy.mont@gmail.com', 'tmont@tmont.com', 'Testing nodemailer', options, function(err) {
-				console.log(require('util').inspect(arguments, false, null, true));
+        console.log(require('util').inspect(arguments, false, null, true));
 				done(err);
 			});
 		});

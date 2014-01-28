@@ -7,7 +7,8 @@ module.exports = {
 	web: require('./src/web'),
 	persistence: require('./src/persistence'),
 	mail: {
-		SmtpTransport: require('./src/mail/smtp-transport'),
-		NodeMailerSmtpTransport: require('./src/mail/nodemailer-smtp-transport')
+		MailTransport: require('./src/mail/mail-transport'),
+		NodeMailerSmtpTransport: require('./src/mail/nodemailer-smtp-transport'),
+		NodeMailerPickupTransport: require('./src/mail/nodemailer-pickup-transport')
 	}
 };
