@@ -7,19 +7,31 @@ function CacheInvalidator(/** CacheInvalidationMapping */map, /** CacheClient */
 
 CacheInvalidator.prototype = {
 	invalidate: function(entity, callback) {
+		var args = [].slice.call(arguments),
+			hasCallback = true;
+
+		callback = args[args.length - 1];
+
+		if (typeof(callback) !== 'function') {
+			callback = function() {};
+			hasCallback = false;
+		}
+
 		var type = entity.constructor.name;
 		if (!(type in this.map)) {
-			callback && callback(null, { noMapping: true });
+			callback(null, { noMapping: true });
 			return;
 		}
 
-		var keys = this.map[type](entity);
+		var mapArgs = hasCallback ? args.slice(0, -1) : args;
+
+		var keys = this.map[type].apply(this.map, mapArgs);
 		if (!Array.isArray(keys)) {
 			keys = [ keys ];
 		}
 
 		async.each(keys, this.client.invalidate.bind(this.client), function(err) {
-			callback && callback(err, { invalidated: !err });
+			callback(err, { invalidated: !err });
 		});
 	}
 };

@@ -287,5 +287,39 @@ describe('Caching', function() {
 				done();
 			});
 		});
+
+		it('should pass arbitrary args to map function', function(done) {
+			function Foo() {
+			}
+
+			var mapping = {
+				Foo: function(entity, whatever) {
+					entity.should.be.instanceOf(Foo);
+					whatever.should.equal('whatever');
+					maps++;
+					return 'foobarbaz';
+				}
+			};
+
+			var invalidates = 0;
+			var maps = 0;
+			var client = {
+				invalidate: function(key, callback) {
+					invalidates++;
+					key.should.equal('foobarbaz');
+
+					callback();
+				}
+			};
+
+			var invalidator = new caching.CacheInvalidator(mapping, client);
+			invalidator.invalidate(new Foo(), 'whatever', function(err, result) {
+				should.not.exist(err);
+				result.should.have.property('invalidated', true);
+				invalidates.should.equal(1);
+				maps.should.equal(1);
+				done();
+			});
+		});
 	});
 });
