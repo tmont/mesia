@@ -62,10 +62,10 @@ function Route(name, url, title, description, extra) {
 }
 
 Route.prototype = {
-	middleware: function(app) {
+	middleware: function() {
 		var self = this;
 		return function(req, res, next) {
-			app.locals.route = self;
+			res.locals.mesiaRoute = self;
 			next();
 		};
 	},

@@ -76,16 +76,22 @@ module.exports = function(container, libs) {
 	//initialize controller context
 	app.use(require('../middleware/controller-context')(container, libs));
 
+	//set up request locals for use by other middleware
+	app.use(function(req, res, next) {
+		req.container.registerInstance(res.locals, 'RequestLocals');
+		next();
+	});
+
 	//expose request and isAuthenticated in locals
 	app.use(function(req, res, next) {
-		app.locals.req = req;
-		req.isAuthenticated = app.locals.isAuthenticated = !!(req.session && req.session.user && req.session.user.id);
+		res.locals.req = req;
+		req.isAuthenticated = res.locals.isAuthenticated = !!(req.session && req.session.user && req.session.user.id);
 		next();
 	});
 
 	//execute custom middleware
 	app.use(function(req, res, next) {
-		var middleware = container.tryResolveSync('Middleware');
+		var middleware = req.container.tryResolveSync('Middleware');
 		if (!middleware || !middleware.length) {
 			next();
 			return;

@@ -68,12 +68,15 @@ module.exports = function(parentContainer, libs) {
 
 			doRender: function(viewName, locals, route, status, send, goaOptions) {
 				locals = locals || {};
+				var realLocals = container.tryResolveSync('RequestLocals') || {};
+				util._extend(realLocals, locals);
+
 				var response = {
-					info: route ? route.getInfo(locals) : {},
-					viewData: locals.viewData || {}
+					info: route ? route.getInfo(realLocals) : {},
+					viewData: realLocals.viewData || {}
 				};
 
-				locals.info = response.info;
+				realLocals.info = response.info;
 
 				if (!this.isContentRequest) {
 					compilePartials(function(err) {
@@ -82,11 +85,11 @@ module.exports = function(parentContainer, libs) {
 							return;
 						}
 
-						locals.partials = response.partials || {};
+						realLocals.partials = response.partials || {};
 						goaOptions = util._extend(goaOptions || {}, {
 							status: status
 						});
-						send(goa.view(viewName, locals, goaOptions));
+						send(goa.view(viewName, realLocals, goaOptions));
 					});
 					return;
 				}
@@ -145,10 +148,9 @@ module.exports = function(parentContainer, libs) {
 						}
 
 						//merge in locals from app
-						locals = util._extend({}, locals);
-
-						//fucking express
+						var locals = util._extend({}, realLocals);
 						Object.keys(app.locals).forEach(function(key) {
+							//fucking express
 							locals[key] = app.locals[key];
 						});
 
