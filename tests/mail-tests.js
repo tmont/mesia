@@ -1,8 +1,8 @@
 var should = require('should'),
 	mail = require('../').mail,
-  async = require('async'),
-  fs = require('fs'),
-  path = require('path');
+	async = require('async'),
+	fs = require('fs'),
+	path = require('path');
 
 describe('Mail', function() {
 	it('should compose message object with string body', function(done) {
@@ -78,27 +78,27 @@ describe('Mail', function() {
 			'encoding',
 			'charset'
 		].forEach(function(option) {
-			it('should set ' + option + ' on message', function(done) {
-				var sendMail = 0;
-				var transport = new mail.MailTransport();
-				transport.sendMail = function(message, callback) {
-					sendMail++;
-					message.should.have.property('from', 'x@y.com');
-					message.should.have.property('to', [ 'a@b.com' ]);
-					message.should.have.property('subject', 'a');
-					message.should.have.property(option, 'foo');
-					callback();
-				};
+				it('should set ' + option + ' on message', function(done) {
+					var sendMail = 0;
+					var transport = new mail.MailTransport();
+					transport.sendMail = function(message, callback) {
+						sendMail++;
+						message.should.have.property('from', 'x@y.com');
+						message.should.have.property('to', [ 'a@b.com' ]);
+						message.should.have.property('subject', 'a');
+						message.should.have.property(option, 'foo');
+						callback();
+					};
 
-				var options = {};
-				options[option] = 'foo';
-				transport.send('x@y.com', 'a@b.com', 'a', options, function(err) {
-					should.not.exist(err);
-					sendMail.should.equal(1);
-					done();
+					var options = {};
+					options[option] = 'foo';
+					transport.send('x@y.com', 'a@b.com', 'a', options, function(err) {
+						should.not.exist(err);
+						sendMail.should.equal(1);
+						done();
+					});
 				});
 			});
-		});
 
 		[
 			'cc',
@@ -106,27 +106,27 @@ describe('Mail', function() {
 			'replyTo',
 			'inReplyTo'
 		].forEach(function(option) {
-			it('should set ' + option + ' on message', function(done) {
-				var sendMail = 0;
-				var transport = new mail.MailTransport();
-				transport.sendMail = function(message, callback) {
-					sendMail++;
-					message.should.have.property('from', 'x@y.com');
-					message.should.have.property('to', [ 'a@b.com' ]);
-					message.should.have.property('subject', 'a');
-					message.should.have.property(option, [ 'foo' ]);
-					callback();
-				};
+				it('should set ' + option + ' on message', function(done) {
+					var sendMail = 0;
+					var transport = new mail.MailTransport();
+					transport.sendMail = function(message, callback) {
+						sendMail++;
+						message.should.have.property('from', 'x@y.com');
+						message.should.have.property('to', [ 'a@b.com' ]);
+						message.should.have.property('subject', 'a');
+						message.should.have.property(option, [ 'foo' ]);
+						callback();
+					};
 
-				var options = {};
-				options[option] = 'foo';
-				transport.send('x@y.com', 'a@b.com', 'a', options, function(err) {
-					should.not.exist(err);
-					sendMail.should.equal(1);
-					done();
+					var options = {};
+					options[option] = 'foo';
+					transport.send('x@y.com', 'a@b.com', 'a', options, function(err) {
+						should.not.exist(err);
+						sendMail.should.equal(1);
+						done();
+					});
 				});
 			});
-		});
 	});
 
 	describe('with templating', function() {
@@ -165,85 +165,29 @@ describe('Mail', function() {
 		});
 	});
 
-  describe('with NodemailerPickupTransport', function() {
+	describe('with NodemailerPickupTransport', function() {
 
-    var pickupDir = path.join(__dirname, 'pickup');
+		var pickupDir = path.join(__dirname, 'pickup');
 
-    before(function(done) {
-      fs.exists(pickupDir, function(exists) {
-        if (!exists) {
-          fs.mkdir(pickupDir, function(err) {
-            done(err);
-          });
-          return;
-        }
+		before(function(done) {
+			fs.exists(pickupDir, function(exists) {
+				if (!exists) {
+					fs.mkdir(pickupDir, function(err) {
+						done(err);
+					});
+					return;
+				}
 
-        done();
-      });
-    });
+				done();
+			});
+		});
 
-    it('should send email with pickup transport', function(done) {
-      var config = {
-        directory: pickupDir
-      };
+		it('should send email with pickup transport', function(done) {
+			var config = {
+				directory: pickupDir
+			};
 
-      var mailer = new mail.NodeMailerPickupTransport(config, __dirname + '/mail/templates');
-      var options = {
-        template: 'basic',
-        locals: {
-          hello: 'Well hello there, ',
-          name: 'Tommy Boy'
-        }
-      };
-      mailer.send('tommy.mont@gmail.com', 'tmont@tmont.com', 'Testing nodemailer', options, function(err, email) {
-        should.not.exist(err);
-        should.exist(email);
-
-        fs.exists(email.path, function(exists) {
-          should.exist(exists);
-          done();
-        });
-      });
-    });
-
-    after(function(done) {
-      fs.exists(pickupDir, function(exists) {
-        if (exists) {
-          fs.readdir(pickupDir, function(err, files) {
-            if (err) {
-              done(err);
-              return;
-            }
-
-            async.forEach(files, function(file, next) {
-              fs.unlink(path.join(pickupDir, file), next);
-            }, function(err) {
-              if (err) {
-                done(err);
-                return;
-              }
-              fs.rmdir(pickupDir, done);
-            });
-          });
-          return;
-        }
-
-        done();
-      });
-    });
-  });
-
-	function testNodeMailer() {
-		var config = {
-			service: 'Gmail',
-			auth: {
-				user: process.env.NODEMAILER_USER,
-				pass: process.env.NODEMAILER_PASS
-			}
-		};
-
-		it('should send email using nodemailer', function(done) {
-			var mailer = new mail.NodeMailerSmtpTransport(config, __dirname + '/mail/templates');
+			var mailer = new mail.NodeMailerPickupTransport(config, __dirname + '/mail/templates');
 			var options = {
 				template: 'basic',
 				locals: {
@@ -251,16 +195,42 @@ describe('Mail', function() {
 					name: 'Tommy Boy'
 				}
 			};
-			mailer.send('tommy.mont@gmail.com', 'tmont@tmont.com', 'Testing nodemailer', options, function(err) {
-        console.log(require('util').inspect(arguments, false, null, true));
-				done(err);
+			mailer.send('x@y.com', 'a@b.com', 'Test', options, function(err, email) {
+				should.not.exist(err);
+				should.exist(email);
+
+				fs.exists(email.path, function(exists) {
+					should.exist(exists);
+					done();
+				});
 			});
 		});
-	}
 
-	if (process.env.NODEMAILER === '1') {
-		testNodeMailer();
-	}
+		after(function(done) {
+			fs.exists(pickupDir, function(exists) {
+				if (exists) {
+					fs.readdir(pickupDir, function(err, files) {
+						if (err) {
+							done(err);
+							return;
+						}
 
+						async.forEach(files, function(file, next) {
+							fs.unlink(path.join(pickupDir, file), next);
+						}, function(err) {
+							if (err) {
+								done(err);
+								return;
+							}
+							fs.rmdir(pickupDir, done);
+						});
+					});
+					return;
+				}
+
+				done();
+			});
+		});
+	});
 });
 
