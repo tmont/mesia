@@ -85,6 +85,7 @@ module.exports = function(container, libs) {
 	//expose request and isAuthenticated in locals
 	app.use(function(req, res, next) {
 		var locals = req.container.resolveSync('RequestLocals');
+		locals.req = req;
 		req.isAuthenticated = locals.isAuthenticated = !!(req.session && req.session.user && req.session.user.id);
 		next();
 	});
