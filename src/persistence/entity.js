@@ -19,6 +19,11 @@ Entity.prototype = {
 		return this.toDto();
 	},
 
+	/**
+	 * Suitable for sending across the wire
+	 *
+	 * @returns {Object}
+	 */
 	toDto: function() {
 		var map = this.getDtoProperties(),
 			dto = {},
@@ -43,6 +48,13 @@ Entity.prototype = {
 		}
 
 		return dto;
+	},
+
+	/**
+	 * Suitable for caching
+	 */
+	toFullDto: function() {
+		return this.toDto();
 	},
 
 	getDtoProperties: function() {

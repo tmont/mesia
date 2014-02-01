@@ -178,7 +178,7 @@ util._extend(Repository.prototype, {
 					return;
 				}
 
-				var cacheable = result && typeof(result.toDto) === 'function' ? result.toDto() : result;
+				var cacheable = result && typeof(result.toFullDto) === 'function' ? result.toFullDto() : result;
 				self.cache.set(cacheKey, cacheable, ttl, function(err) {
 					err && self.cache.log.error(err);
 					done(null, result);
