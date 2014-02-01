@@ -15,6 +15,8 @@ module.exports = function(container, libs) {
 	app.enable('case sensitive routing');
 	if (!config.cacheViews) {
 		app.disable('view cache');
+	} else {
+		app.enable('view cache');
 	}
 	app.set('views', path.join(root, 'views'));
 	app.set('view engine', 'jade');
