@@ -65,7 +65,10 @@ Route.prototype = {
 	middleware: function() {
 		var self = this;
 		return function(req, res, next) {
-			res.locals.mesiaRoute = self;
+			var locals = req.container.tryResolveSync('RequestLocals');
+			if (locals) {
+				locals.mesiaRoute = self;
+			}
 			next();
 		};
 	},

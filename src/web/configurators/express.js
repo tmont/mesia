@@ -78,14 +78,14 @@ module.exports = function(container, libs) {
 
 	//set up request locals for use by other middleware
 	app.use(function(req, res, next) {
-		req.container.registerInstance(res.locals, 'RequestLocals');
+		req.container.registerInstance({}, 'RequestLocals');
 		next();
 	});
 
 	//expose request and isAuthenticated in locals
 	app.use(function(req, res, next) {
-		res.locals.req = req;
-		req.isAuthenticated = res.locals.isAuthenticated = !!(req.session && req.session.user && req.session.user.id);
+		var locals = req.container.resolveSync('RequestLocals');
+		req.isAuthenticated = locals.isAuthenticated = !!(req.session && req.session.user && req.session.user.id);
 		next();
 	});
 
