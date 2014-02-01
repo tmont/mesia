@@ -49,15 +49,9 @@ module.exports = function(parentContainer, libs) {
 					log.error(err);
 				}
 
-				var viewName = '500';
 				var errorRoutes = container.tryResolveSync('ErrorRoutes'),
-					route = errorRoutes && errorRoutes[status];
-				switch (status) {
-					case 403:
-					case 404:
-						viewName = status.toString();
-						break;
-				}
+					route = errorRoutes && errorRoutes[status],
+					viewName = route ? status.toString() : '500';
 
 				this.doRender('errors/' + viewName, { isError: true }, route, status, send);
 			},
