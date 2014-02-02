@@ -51,6 +51,68 @@ describe('Repository', function() {
 		});
 	});
 
+	it('should get and set null values', function(done) {
+		var key = 'asdf',
+			missed = 0,
+			hit = 0,
+			gets = 0,
+			sets = 0,
+			result = {};
+
+		var cache = {
+			log: { debug: function() { } },
+			get: function(key, callback) {
+				gets++;
+				key.should.equal('asdf');
+				if (gets === 2) {
+					callback(null, null);
+					return;
+				}
+
+				callback();
+			},
+
+			set: function(key, value, expiry, callback) {
+				sets++;
+				key.should.equal('asdf');
+				(value === null).should.equal(true);
+				should.not.exist(expiry);
+				callback();
+			}
+		};
+
+		function onMiss(callback) {
+			missed++;
+			callback(null, null);
+		}
+
+		function onHit(json, callback) {
+			hit++;
+			callback(null, json);
+		}
+
+		var repo = new Repository({}, Foo, cache);
+
+		repo.useCache(key, onMiss, onHit, function(err, entity) {
+			should.not.exist(err);
+			(entity === null).should.equal(true);
+			missed.should.equal(1);
+			hit.should.equal(0);
+			gets.should.equal(1);
+			sets.should.equal(1);
+
+			repo.useCache(key, onMiss, onHit, function(err, entity) {
+				should.not.exist(err);
+				(entity === null).should.equal(true);
+				missed.should.equal(1);
+				hit.should.equal(1);
+				gets.should.equal(2);
+				sets.should.equal(1);
+				done();
+			});
+		});
+	});
+
 	it('should use cache with hit', function(done) {
 		var key = 'asdf',
 			hit = 0,

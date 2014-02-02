@@ -154,7 +154,7 @@ util._extend(Repository.prototype, {
 			start = Date.now();
 		this.cache.get(cacheKey, function(err, json) {
 			var elapsed = (Date.now() - start);
-			if (json) {
+			if (typeof(json) !== 'undefined') {
 				self.cache.log.debug(
 					'cache \x1B[32mhit\x1B[39m: \x1B[33m' + cacheKey +
 					'\x1B[39m [' + elapsed + 'ms]'
@@ -176,6 +176,12 @@ util._extend(Repository.prototype, {
 				if (err) {
 					done(err);
 					return;
+				}
+
+				if (typeof(result) === 'undefined') {
+					//make sure it's !== undefined, otherwise the redis client lib
+					//will barf as it calculates arity and stuff
+					result = null;
 				}
 
 				var cacheable = result && typeof(result.toFullDto) === 'function' ? result.toFullDto() : result;
