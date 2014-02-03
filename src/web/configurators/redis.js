@@ -9,9 +9,13 @@ module.exports = function(container, libs) {
 		port: cfg.port
 	});
 
-	client.on('error', function(err) {
-		log.error('Redis error', err);
-	});
+
+	// redis error handling is just fucking embarrassing:
+	// apparently this catches ALL errors, not just errors emitted by
+	// redis. WHAT THE FUCK.
+//	client.on('error', function(err) {
+//		log.error('Redis error', err);
+//	});
 
 	container.registerInstance(client, 'RedisClient', lifetime.memory());
 };
