@@ -1,6 +1,6 @@
 module.exports = function(container) {
 	var log = container.resolveSync('Logger');
-	function sendErrorUsingController(req, res, route, callback) {
+	function sendErrorUsingController(err, req, res, route, callback) {
 		if (!req.container) {
 			callback(true);
 			return;
@@ -17,14 +17,11 @@ module.exports = function(container) {
 			action: route.name
 		};
 
+		req.params.isError = true;
 		app.middleware(params)(req, res, callback);
 	}
 
 	function sendErrorManually(err, req, res, route, view) {
-		if (!err.status || err.status >= 500) {
-			log.error(err);
-		}
-
 		if (err.status || res.statusCode === 200) {
 			res.status(err.status || 500);
 		}
@@ -60,6 +57,10 @@ module.exports = function(container) {
 	}
 
 	return function(err, req, res, next) {
+		if (!err.status || err.status >= 500) {
+			log.error(err);
+		}
+
 		var view = '500';
 		switch (res.statusCode) {
 			case 403:
@@ -71,7 +72,7 @@ module.exports = function(container) {
 		var errorRoutes = container.tryResolveSync('ErrorRoutes');
 		var route = errorRoutes && errorRoutes[view];
 
-		sendErrorUsingController(req, res, route, function(controllerError) {
+		sendErrorUsingController(err, req, res, route, function(controllerError) {
 			if (!controllerError) {
 				return;
 			}
