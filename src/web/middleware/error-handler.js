@@ -1,6 +1,26 @@
 module.exports = function(container) {
 	var log = container.resolveSync('Logger');
-	return function(err, req, res, next) {
+	function sendErrorUsingController(req, res, route, callback) {
+		if (!req.container) {
+			callback(true);
+			return;
+		}
+
+		var app = req.container.tryResolveSync('App');
+		if (!app) {
+			callback(true);
+			return;
+		}
+
+		var params = {
+			controller: 'error',
+			action: route.name
+		};
+
+		app.middleware(params)(req, res, callback);
+	}
+
+	function sendErrorManually(err, req, res, route, view) {
 		if (!err.status || err.status >= 500) {
 			log.error(err);
 		}
@@ -15,18 +35,8 @@ module.exports = function(container) {
 				break;
 			default:
 				try {
-					var view = '500';
-					switch (res.statusCode) {
-						case 403:
-						case 404:
-							view = res.statusCode.toString();
-							break;
-					}
-
-					var errorRoutes = container.tryResolveSync('ErrorRoutes');
-					var route = errorRoutes && errorRoutes[view];
 					var locals = {
-						pageCategory: 'error',
+						isError: true,
 						info: route ? route.getInfo() : {
 							title: 'NOPE.',
 							description: 'NOPE.',
@@ -47,5 +57,30 @@ module.exports = function(container) {
 				}
 				break;
 		}
+	}
+
+	return function(err, req, res, next) {
+		var view = '500';
+		switch (res.statusCode) {
+			case 403:
+			case 404:
+				view = res.statusCode.toString();
+				break;
+		}
+
+		var errorRoutes = container.tryResolveSync('ErrorRoutes');
+		var route = errorRoutes && errorRoutes[view];
+
+		sendErrorUsingController(req, res, route, function(controllerError) {
+			if (!controllerError) {
+				return;
+			}
+
+			if (controllerError !== false) {
+				log.error('Error rendering view using controller', controllerError);
+			}
+
+			sendErrorManually(err, req, res, route, view);
+		});
 	};
 };
