@@ -1,7 +1,7 @@
 module.exports = function(container) {
 	var log = container.resolveSync('Logger');
 	function sendErrorUsingController(err, req, res, route, callback) {
-		if (!req.container) {
+		if (!req.container || !route) {
 			callback(true);
 			return;
 		}
