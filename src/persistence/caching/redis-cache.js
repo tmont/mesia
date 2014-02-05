@@ -12,6 +12,7 @@ function RedisCache(/** RedisClient */client, /** Logger */log) {
 
 RedisCache.prototype = {
 	get: function(key, callback) {
+		this.log.debug('getting cache value at \x1B[33m' + key + '\x1B[39m');
 		this.client.get(key, logErrorAndCallback(this.log, callback));
 	},
 
@@ -35,10 +36,12 @@ RedisCache.prototype = {
 			return;
 		}
 
+		this.log.debug('setting cache value at \x1B[33m' + key + '\x1B[39m with ttl \x1B[33m' + ttl + '\x1B[39m');
 		this.client.setex(key, ttl, value, logErrorAndCallback(this.log, callback));
 	},
 
 	invalidate: function(key, callback) {
+		this.log.debug('invalidating cache key \x1B[33m' + key + '\x1B[39m');
 		this.client.del(key, logErrorAndCallback(this.log, callback));
 	}
 };

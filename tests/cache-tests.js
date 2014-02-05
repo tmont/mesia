@@ -2,6 +2,7 @@ var should = require('should'),
 	caching = require('../').persistence.caching;
 
 describe('Caching', function() {
+	var log = require('../').Logger.noop;
 	describe('with redis', function() {
 		it('should set value with no ttl', function(done) {
 			var setex = 0;
@@ -15,7 +16,7 @@ describe('Caching', function() {
 				}
 			};
 
-			var cache = new caching.RedisCache(client, {});
+			var cache = new caching.RedisCache(client, log);
 			cache.set('foo', 'bar', function(err) {
 				should.not.exist(err);
 				setex.should.equal(1);
@@ -35,7 +36,7 @@ describe('Caching', function() {
 				}
 			};
 
-			var cache = new caching.RedisCache(client, {});
+			var cache = new caching.RedisCache(client, log);
 			cache.set('foo', 'bar', 7, function(err) {
 				should.not.exist(err);
 				setex.should.equal(1);
@@ -55,7 +56,7 @@ describe('Caching', function() {
 				}
 			};
 
-			var cache = new caching.RedisCache(client, {}),
+			var cache = new caching.RedisCache(client, log),
 				ttl = new Date();
 
 			ttl.setMinutes(ttl.getMinutes() + 10);
@@ -76,7 +77,7 @@ describe('Caching', function() {
 				}
 			};
 
-			var cache = new caching.RedisCache(client, {});
+			var cache = new caching.RedisCache(client, log);
 			cache.get('foo', function(err, value) {
 				should.not.exist(err);
 				gets.should.equal(1);
@@ -95,7 +96,7 @@ describe('Caching', function() {
 				}
 			};
 
-			var cache = new caching.RedisCache(client, {});
+			var cache = new caching.RedisCache(client, log);
 			cache.invalidate('foo', function(err) {
 				should.not.exist(err);
 				dels.should.equal(1);
