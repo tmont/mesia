@@ -12,7 +12,6 @@ function RedisCache(/** RedisClient */client, /** Logger */log) {
 
 RedisCache.prototype = {
 	get: function(key, callback) {
-		this.log.debug('getting cache value at \x1B[33m' + key + '\x1B[39m');
 		this.client.get(key, logErrorAndCallback(this.log, callback));
 	},
 
