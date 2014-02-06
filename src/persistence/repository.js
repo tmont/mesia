@@ -7,6 +7,7 @@ function Repository(executor, type, cache, validatorFactory) {
 	this.type = type;
 	this.cache = cache;
 	this.validatorFactory = validatorFactory;
+	this.sql = this.executor && this.executor.sql;
 }
 
 util.inherits(Repository, EventEmitter);
