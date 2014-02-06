@@ -17,7 +17,9 @@ module.exports = function(container) {
 			action: route.name
 		};
 
-		req.params.isError = true;
+		if (req.params) {
+			req.params.isError = true;
+		}
 		app.middleware(params)(req, res, callback);
 	}
 
