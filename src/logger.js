@@ -139,9 +139,11 @@ Logger.prototype = {
 	}
 };
 
-Logger.noop = new Logger({
-	log: function(level, message) {},
-	on: function() {}
+Object.defineProperty(Logger, 'noop', {
+	value: new Logger({
+		log: function(level, message) {},
+		on: function() { }
+	})
 });
 
 module.exports = Logger;
