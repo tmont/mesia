@@ -1,6 +1,6 @@
 module.exports = {
 	Entity: require('./entity'),
-	QueryExecutor: require('./query-executor'),
+	SqlExecutor: require('./sql-executor'),
 	Repository: require('./repository'),
 
 	caching: {

@@ -1,4 +1,4 @@
-var MySqlQueryExecutor = require('../../persistence/query-executor.js'),
+var SqlExecutor = require('../../persistence/sql-executor.js'),
 	util = require('util');
 
 module.exports = function(key, dbKey) {
@@ -17,7 +17,8 @@ module.exports = function(key, dbKey) {
 				}
 
 				var log = container.resolveSync('Logger'),
-					executor = new MySqlQueryExecutor(dbConn, log);
+					sql = container.resolveSync('Sql'),
+					executor = new SqlExecutor(dbConn, log, sql);
 
 				if (log.isDebugEnabled()) {
 					executor.on('queried', function(data) {

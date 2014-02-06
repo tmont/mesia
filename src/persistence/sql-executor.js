@@ -1,14 +1,22 @@
 var EventEmitter = require('events').EventEmitter,
 	util = require('util');
 
-function QueryExecutor(/** DbConnection */conn, /**Logger */log) {
+/**
+ * Abstraction for executing SQL queries against a database
+ *
+ * @param {Object} conn Database connection, should have "query" method
+ * @param {Logger} log
+ * @param {Object} [sql] An instance of the node-sql library, for use by a repository
+ */
+function SqlExecutor(/** DbConnection */conn, /**Logger */log, /** Sql */sql) {
 	this.conn = conn;
+	this.sql = sql;
 	this.log = log;
 }
 
-util.inherits(QueryExecutor, EventEmitter);
+util.inherits(SqlExecutor, EventEmitter);
 
-QueryExecutor.prototype.execute = function(query, callback) {
+SqlExecutor.prototype.execute = function(query, callback) {
 	var self = this,
 		start = Date.now(),
 		name = query._name || '';
@@ -54,4 +62,4 @@ QueryExecutor.prototype.execute = function(query, callback) {
 	this.conn.query.apply(this.conn, args);
 };
 
-module.exports = QueryExecutor;
+module.exports = SqlExecutor;
