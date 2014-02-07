@@ -18,16 +18,30 @@ module.exports = function(executorKey, key) {
 							return;
 						}
 
-						next(function() {
+						next(function(done) {
 							if (context.error) {
 								executor.execute('ROLLBACK', function(err) {
-									err && log.error('Error during rollback', err);
+									if (err) {
+										if (!context.error) {
+											context.error = err;
+										}
+										log.error('Error during rollback', err);
+									}
+
+									done();
 								});
 								return;
 							}
 
 							executor.execute('COMMIT', function(err) {
-								err && log.error('Error committing transaction', err);
+								if (err) {
+									if (!context.error) {
+										context.error = err;
+									}
+									log.error('Error committing transaction', err);
+								}
+
+								done();
 							});
 						});
 					});
