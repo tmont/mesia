@@ -67,7 +67,7 @@ util._extend(Repository.prototype, {
 			options = {};
 		}
 
-		this.executor.execute(this.getDeleteQuery(entity), options, function(err) {
+		this.execute(this.getDeleteQuery(entity), options, function(err) {
 			callback && callback(err);
 		});
 	},
