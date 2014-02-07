@@ -62,6 +62,11 @@ util._extend(Repository.prototype, {
 	},
 
 	del: function(entity, options, callback) {
+		if (typeof(options) === 'function') {
+			callback = options;
+			options = {};
+		}
+
 		this.executor.execute(this.getDeleteQuery(entity), options, function(err) {
 			callback && callback(err);
 		});
