@@ -17,6 +17,10 @@ describe('Entity', function() {
 			foo.should.have.property('foo', 'bar');
 		});
 
+		it('should not do anything for null', function() {
+			should.not.exist(Foo.create(null));
+		});
+
 		it('should create object from instance', function() {
 			var entity = new Foo({ foo: 'bar' });
 			var foo = Foo.create(entity);

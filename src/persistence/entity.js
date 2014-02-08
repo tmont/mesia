@@ -72,6 +72,11 @@ Entity.inherit = function(ctor, parent) {
 			throw new Error('Cannot create entity from array');
 		}
 
+		if (!jsonOrEntity) {
+			//can't create something from nothing, we're not God
+			return null;
+		}
+
 		if (jsonOrEntity instanceof ctor) {
 			return jsonOrEntity;
 		}
