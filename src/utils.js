@@ -36,5 +36,5 @@ exports.formatNumber = function(number, decimals, decimalPoint, thousandsSeparat
 };
 
 exports.formatMoney = function(amount) {
-	return '$' + exports.formatNumber(amount, 2);
+	return exports.formatNumber(amount, 2);
 };
