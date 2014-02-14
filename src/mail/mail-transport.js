@@ -1,3 +1,5 @@
+var initTemplates = require('email-templates');
+
 function addressToArray(address) {
 	return Array.isArray(address)
 		? address
@@ -15,7 +17,7 @@ MailTransport.prototype = {
 	evaluateTemplate: function(template, locals, callback) {
 		var self = this;
 		if (!this.tmpl) {
-			require('email-templates')(this.templatesDir, function(err, tmpl) {
+			initTemplates(this.templatesDir, function(err, tmpl) {
 				if (err) {
 					callback(err);
 					return;
