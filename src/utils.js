@@ -1,4 +1,4 @@
-var formatDate = require('dateformat');
+var moment = require('moment-timezone');
 
 exports.camelize = function(string) {
 	return string.replace(/[-_](\w)/g, function(_, letter) {
@@ -6,8 +6,13 @@ exports.camelize = function(string) {
 	});
 };
 
-exports.formatDate = function(date, format) {
-	return formatDate(date, format || 'UTC:yyyy-mm-dd HH:MM:ss');
+exports.formatDate = function(date, timezone, format) {
+	date = moment(date);
+	if (timezone) {
+		date = date.tz(timezone);
+	}
+
+	return date.format(format || 'YYYY-MM-DD hh:mm:ss');
 };
 
 //http://phpjs.org/functions/number_format/

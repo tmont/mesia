@@ -2,6 +2,7 @@ module.exports = {
 	Entity: require('./entity'),
 	SqlExecutor: require('./sql-executor'),
 	Repository: require('./repository'),
+	Validator: require('./validator'),
 
 	caching: {
 		InMemoryCache: require('./caching/in-memory-cache'),
