@@ -15,7 +15,11 @@ Validator.prototype = {
 			}
 
 			validator(entity, entity[field], function(errorMessage) {
-				callback(errorMessage ? self.createError(field, entity, message || errorMessage) : null);
+				callback(
+					errorMessage
+						? self.createError(field, entity, message || (field + ' ' + errorMessage))
+						: null
+				);
 			});
 		});
 
@@ -38,19 +42,19 @@ var validators = Validator.validators = {
 	integer: function(entity, value, callback) {
 		//http://phpjs.org/functions/is_int/
 		var valid = value === +value && isFinite(value) && !(value % 1);
-		callback(valid ? null : 'Must be an integer');
+		callback(valid ? null : 'must be an integer');
 	},
 
 	float: function(entity, value, callback) {
 		//http://phpjs.org/functions/is_float/
 		var valid = value === +value && (!isFinite(value) || !!(value % 1));
-		callback(valid ? null : 'Must be a float');
+		callback(valid ? null : 'must be a float');
 	},
 
 	instanceOf: function(type) {
 		return function(entity, value, callback) {
 			var valid = value instanceof type;
-			callback(valid ? null : 'Must be an instance of ' + type.name);
+			callback(valid ? null : 'must be an instance of ' + type.name);
 		};
 	},
 
@@ -69,11 +73,11 @@ var validators = Validator.validators = {
 
 			var message;
 			if (lower === upper) {
-				message = 'Must be exactly ' + upper + ' characters long';
+				message = 'must be exactly ' + upper + ' characters long';
 			} else {
 				message = upper === Infinity
-					? 'Must be at least ' + lower + ' characters long'
-					: 'Must be between ' + lower + ' and ' + upper + ' characters long';
+					? 'must be at least ' + lower + ' characters long'
+					: 'must be between ' + lower + ' and ' + upper + ' characters long';
 			}
 
 			callback(valid ? null : message);
@@ -81,7 +85,7 @@ var validators = Validator.validators = {
 	},
 
 	regex: function(regex) {
-		var message = 'Must match regex ' + regex.toString();
+		var message = 'must match regex ' + regex.toString();
 		return function(entity, value, callback) {
 			if (typeof(value) !== 'string') {
 				callback(message);
@@ -104,7 +108,7 @@ var validators = Validator.validators = {
 
 	date: function(entity, value, callback) {
 		var valid = moment.isMoment(value) || value instanceof Date;
-		callback(valid ? null : 'Must be a date');
+		callback(valid ? null : 'must be a date');
 	}
 };
 

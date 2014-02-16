@@ -9,7 +9,7 @@ describe('Validator', function() {
 		err.should.have.property('isValidationError', true);
 		err.should.have.property('field', field);
 		err.should.have.property('entity', entity);
-		err.should.have.property('message', message);
+		err.should.have.property('message', field + ' ' + message);
 	}
 
 	describe('integers', function() {
@@ -32,7 +32,7 @@ describe('Validator', function() {
 				.map('id', validators.integer);
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'id', entity, 'Must be an integer');
+				validateError(err, 'id', entity, 'must be an integer');
 				done();
 			});
 		});
@@ -44,7 +44,7 @@ describe('Validator', function() {
 				.map('id', validators.integer);
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'id', entity, 'Must be an integer');
+				validateError(err, 'id', entity, 'must be an integer');
 				done();
 			});
 		});
@@ -70,7 +70,7 @@ describe('Validator', function() {
 				.map('id', validators.float);
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'id', entity, 'Must be a float');
+				validateError(err, 'id', entity, 'must be a float');
 				done();
 			});
 		});
@@ -82,7 +82,7 @@ describe('Validator', function() {
 				.map('id', validators.float);
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'id', entity, 'Must be a float');
+				validateError(err, 'id', entity, 'must be a float');
 				done();
 			});
 		});
@@ -132,7 +132,7 @@ describe('Validator', function() {
 				.map('id', validators.stringLength(5));
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'id', entity, 'Must be at least 5 characters long');
+				validateError(err, 'id', entity, 'must be at least 5 characters long');
 				done();
 			});
 		});
@@ -146,7 +146,7 @@ describe('Validator', function() {
 				.map('id', validators.stringLength(5, 7));
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'id', entity, 'Must be between 5 and 7 characters long');
+				validateError(err, 'id', entity, 'must be between 5 and 7 characters long');
 				done();
 			});
 		});
@@ -158,7 +158,7 @@ describe('Validator', function() {
 				.map('id', validators.stringLength(7, 7));
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'id', entity, 'Must be exactly 7 characters long');
+				validateError(err, 'id', entity, 'must be exactly 7 characters long');
 				done();
 			});
 		});
@@ -170,7 +170,7 @@ describe('Validator', function() {
 				.map('id', validators.stringLength(5, 7));
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'id', entity, 'Must be between 5 and 7 characters long');
+				validateError(err, 'id', entity, 'must be between 5 and 7 characters long');
 				done();
 			});
 		});
@@ -245,7 +245,7 @@ describe('Validator', function() {
 				.map('foo', validators.instanceOf(Foo));
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'foo', entity, 'Must be an instance of Foo');
+				validateError(err, 'foo', entity, 'must be an instance of Foo');
 				done();
 			});
 		});
@@ -271,7 +271,7 @@ describe('Validator', function() {
 				.map('id', validators.regex(/foo/));
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'id', entity, 'Must match regex /foo/');
+				validateError(err, 'id', entity, 'must match regex /foo/');
 				done();
 			});
 		});
@@ -309,7 +309,7 @@ describe('Validator', function() {
 				.map('id', validators.date);
 
 			validator.validate(entity, function(err) {
-				validateError(err, 'id', entity, 'Must be a date');
+				validateError(err, 'id', entity, 'must be a date');
 				done();
 			});
 		});
