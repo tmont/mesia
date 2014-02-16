@@ -68,6 +68,7 @@ module.exports = function(container, libs) {
 	app.use(app.express.bodyParser());
 	app.use(app.express.session({
 		secret: config.session.secret,
+		key: config.session.key,
 		proxy: true,
 		store: sessionStore
 	}));
