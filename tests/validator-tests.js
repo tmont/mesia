@@ -314,4 +314,54 @@ describe('Validator', function() {
 			});
 		});
 	});
+
+	describe('required', function() {
+		it('non-null value should pass validation', function(done) {
+			var entity = { id: 'asdf' };
+
+			var validator = new Validator()
+				.map('id', validators.required);
+
+			validator.validate(entity, function(err) {
+				should.not.exist(err);
+				done();
+			});
+		});
+
+		it('null should not pass validation', function(done) {
+			var entity = { id: null };
+
+			var validator = new Validator()
+				.map('id', validators.required);
+
+			validator.validate(entity, function(err) {
+				validateError(err, 'id', entity, 'is required');
+				done();
+			});
+		});
+
+		it('empty string should not pass validation', function(done) {
+			var entity = { id: '' };
+
+			var validator = new Validator()
+				.map('id', validators.required);
+
+			validator.validate(entity, function(err) {
+				validateError(err, 'id', entity, 'is required');
+				done();
+			});
+		});
+
+		it('string consisting entirely of whitespace should not pass validation', function(done) {
+			var entity = { id: '    ' };
+
+			var validator = new Validator()
+				.map('id', validators.required);
+
+			validator.validate(entity, function(err) {
+				validateError(err, 'id', entity, 'is required');
+				done();
+			});
+		});
+	});
 });

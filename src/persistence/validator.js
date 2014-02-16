@@ -109,6 +109,15 @@ var validators = Validator.validators = {
 	date: function(entity, value, callback) {
 		var valid = moment.isMoment(value) || value instanceof Date;
 		callback(valid ? null : 'must be a date');
+	},
+
+	required: function(entity, value, callback) {
+		if (typeof(value) === 'string') {
+			value = value.trim();
+		}
+
+		var valid = !!value;
+		callback(valid ? null : 'is required');
 	}
 };
 
