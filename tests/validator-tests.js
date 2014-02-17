@@ -314,6 +314,30 @@ describe('Validator', function() {
 				done();
 			});
 		});
+
+		it('invalid moment should not pass validation for date', function(done) {
+			var entity = { id: moment('asdf') };
+
+			var validator = new Validator()
+				.map('id', validators.date);
+
+			validator.validate(entity, function(err) {
+				validateError(err, 'id', entity, 'must be a date');
+				done();
+			});
+		});
+
+		it('invalid date should not pass validation for date', function(done) {
+			var entity = { id: new Date('asdf') };
+
+			var validator = new Validator()
+				.map('id', validators.date);
+
+			validator.validate(entity, function(err) {
+				validateError(err, 'id', entity, 'must be a date');
+				done();
+			});
+		});
 	});
 
 	describe('required', function() {

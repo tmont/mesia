@@ -107,7 +107,13 @@ var validators = Validator.validators = {
 	},
 
 	date: function(entity, value, callback) {
-		var valid = moment.isMoment(value) || value instanceof Date;
+		var valid = false;
+		if (moment.isMoment(value)) {
+			valid = value.isValid();
+		} else if (value instanceof Date) {
+			valid = !isNaN(value.getTime());
+		}
+
 		callback(valid ? null : 'must be a date');
 	},
 
