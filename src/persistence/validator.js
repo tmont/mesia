@@ -124,7 +124,7 @@ var validators = Validator.validators = {
 Validator.Error = function(field, entity, message) {
 	this.field = field;
 	this.entity = entity;
-	this.message = message;
+	this.message = this.validationMessage = message;
 	this.isValidationError = true;
 };
 

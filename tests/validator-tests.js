@@ -10,6 +10,7 @@ describe('Validator', function() {
 		err.should.have.property('field', field);
 		err.should.have.property('entity', entity);
 		err.should.have.property('message', field + ' ' + message);
+		err.should.have.property('validationMessage', field + ' ' + message);
 	}
 
 	describe('integers', function() {
