@@ -22,7 +22,8 @@ Logger.levels = {
 };
 
 Logger.colors = {
-	debug: 'grey',
+	trace: 'grey',
+	debug: 'cyan',
 	info: 'green',
 	warn: 'yellow',
 	error: 'red'
@@ -101,8 +102,9 @@ function log(level) {
 
 Logger.prototype = {
 	isDebugEnabled: function() {
-		return this.logger.level === 'debug';
+		return this.logger.level === 'debug' || this.logger.level === 'trace';
 	},
+	trace: log('trace'),
 	debug: log('debug'),
 	info: log('info'),
 	warn: log('warn'),
