@@ -12,6 +12,9 @@ function RedisCache(/** RedisClient */client, /** Logger */log) {
 	this.log = log;
 }
 
+//TODO this whole object should be refactored to accept a cache set
+//in addition to a cache key, so we can use hmget to do more efficient
+//invalidation of multiple keys
 RedisCache.prototype = {
 	get: function(key, callback) {
 		this.client.get(key, logErrorAndCallback(this.log, callback));
