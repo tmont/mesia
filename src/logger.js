@@ -110,6 +110,11 @@ Logger.prototype = {
 	warn: log('warn'),
 	error: log('error'),
 	middleware: function(req, res, next) {
+		if (!this.isDebugEnabled()) {
+			next();
+			return;
+		}
+
 		var signature = req.method + ' ' + req.url + ' HTTP/' + req.httpVersion,
 			start = Date.now(),
 			log = this;

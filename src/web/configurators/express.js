@@ -35,9 +35,7 @@ module.exports = function(container, libs) {
 	app.locals.formatNumber = stringUtils.formatNumber;
 	app.locals.formatMoney = stringUtils.formatMoney;
 
-	if (log.isDebugEnabled()) {
-		app.use(log.middleware.bind(log));
-	}
+	app.use(log.middleware.bind(log));
 
 	//destruct!
 	app.use(function(req, res, next) {
