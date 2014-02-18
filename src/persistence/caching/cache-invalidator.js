@@ -6,6 +6,21 @@ function CacheInvalidator(/** CacheInvalidationMapping */map, /** CacheClient */
 }
 
 CacheInvalidator.prototype = {
+	getKeys: function(key, args) {
+		var mapping = this.map[key];
+		if (!mapping) {
+			return [];
+		}
+
+		var keys = mapping.keys.apply(this.map, args);
+		var dependents = mapping.dependents || [];
+		for (var i = 0; i < dependents.length; i++) {
+			[].push.apply(keys, this.getKeys(dependents[i], args));
+		}
+
+		return keys;
+	},
+
 	invalidate: function(entity, callback) {
 		var args = [].slice.call(arguments),
 			hasCallback = true;
@@ -18,19 +33,27 @@ CacheInvalidator.prototype = {
 		}
 
 		var type = entity.constructor.name;
-		if (!(type in this.map)) {
+		var mapping = this.map[type];
+		if (!mapping) {
 			callback(null, { noMapping: true });
 			return;
 		}
 
-		var mapArgs = hasCallback ? args.slice(0, -1) : args;
+		var keys = this.getKeys(type, hasCallback ? args.slice(0, -1) : args),
+			invalidated = {};
 
-		var keys = this.map[type].apply(this.map, mapArgs);
-		if (!Array.isArray(keys)) {
-			keys = [ keys ];
+		var self = this;
+		function invalidateUniqueKeys(key, next) {
+			if (invalidated[key]) {
+				next();
+				return;
+			}
+
+			invalidated[key] = 1;
+			self.client.invalidate(key, next);
 		}
 
-		async.each(keys, this.client.invalidate.bind(this.client), function(err) {
+		async.each(keys, invalidateUniqueKeys, function(err) {
 			callback(err, { invalidated: !err });
 		});
 	}

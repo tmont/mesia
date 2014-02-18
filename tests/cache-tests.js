@@ -205,13 +205,15 @@ describe('Caching', function() {
 	});
 
 	describe('invalidation', function() {
-		it('should invalidate entity', function(done) {
+		it('should invalidate entity with no dependents', function(done) {
 			function Foo() {}
 			var mapping = {
-				Foo: function(entity) {
-					entity.should.be.instanceOf(Foo);
-					maps++;
-					return 'foobarbaz';
+				Foo: {
+					keys: function(entity) {
+						entity.should.be.instanceOf(Foo);
+						maps++;
+						return [ 'foobarbaz' ];
+					}
 				}
 			};
 
@@ -235,15 +237,78 @@ describe('Caching', function() {
 			});
 		});
 
-		it('should invalidate multiple keys for entity', function(done) {
-			function Foo() {
-			}
+		it('should invalidate entity with dependents', function(done) {
+			function Foo() {}
+			function Bar() {}
+			function Baz() {}
 
 			var mapping = {
-				Foo: function(entity) {
-					entity.should.be.instanceOf(Foo);
-					maps++;
-					return [ 'foo', 'bar' ];
+				Foo: {
+					keys: function(entity) {
+						entity.should.be.instanceOf(Foo);
+						fooKeys++;
+						return [ 'foo' ];
+					},
+
+					dependents: [ 'Bar', 'Baz' ]
+				},
+
+				Bar: {
+					keys: function(entity) {
+						entity.should.be.instanceOf(Foo);
+						barKeys++;
+						return [ 'bar' ];
+					},
+					dependents: [ 'Baz' ]
+				},
+
+				Baz: {
+					keys: function(entity) {
+						entity.should.be.instanceOf(Foo);
+						bazKeys++;
+						return [ 'baz' ];
+					}
+				}
+			};
+
+			var invalidated = [];
+			var fooKeys = 0,
+				barKeys = 0,
+				bazKeys = 0;
+
+			var client = {
+				invalidate: function(key, callback) {
+					invalidated.push(key);
+					callback();
+				}
+			};
+
+			var invalidator = new caching.CacheInvalidator(mapping, client);
+			invalidator.invalidate(new Foo(), function(err, result) {
+				should.not.exist(err);
+				result.should.have.property('invalidated', true);
+				invalidated.should.have.length(3);
+				invalidated.should.containEql('foo');
+				invalidated.should.containEql('bar');
+				invalidated.should.containEql('baz');
+
+				fooKeys.should.equal(1);
+				barKeys.should.equal(1);
+				bazKeys.should.equal(2);
+				done();
+			});
+		});
+
+		it('should invalidate multiple keys for entity', function(done) {
+			function Foo() {}
+
+			var mapping = {
+				Foo: {
+					keys: function(entity) {
+						entity.should.be.instanceOf(Foo);
+						maps++;
+						return [ 'foo', 'bar' ];
+					}
 				}
 			};
 
@@ -290,15 +355,16 @@ describe('Caching', function() {
 		});
 
 		it('should pass arbitrary args to map function', function(done) {
-			function Foo() {
-			}
+			function Foo() {}
 
 			var mapping = {
-				Foo: function(entity, whatever) {
-					entity.should.be.instanceOf(Foo);
-					whatever.should.equal('whatever');
-					maps++;
-					return 'foobarbaz';
+				Foo: {
+					keys: function(entity, whatever) {
+						entity.should.be.instanceOf(Foo);
+						whatever.should.equal('whatever');
+						maps++;
+						return [ 'foobarbaz' ];
+					}
 				}
 			};
 
