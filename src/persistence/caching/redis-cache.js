@@ -1,3 +1,5 @@
+var async = require('async');
+
 function logErrorAndCallback(log, callback) {
 	return function(err) {
 		err && log.error('Redis error', err);
@@ -40,8 +42,26 @@ RedisCache.prototype = {
 	},
 
 	invalidate: function(key, callback) {
-		this.log.debug('invalidating cache key \x1B[33m' + key + '\x1B[39m');
-		this.client.del(key, logErrorAndCallback(this.log, callback));
+		var wildcard = key.charAt(key.length - 1) === '*',
+			self = this;
+
+		function invalidate(key, next) {
+			self.log.debug('invalidating cache key \x1B[33m' + key + '\x1B[39m');
+			self.client.del(key, next);
+		}
+
+		if (wildcard) {
+			this.client.keys(key, function(err, keys) {
+				if (err) {
+					callback(err);
+					return;
+				}
+
+				async.each(keys, invalidate, logErrorAndCallback(self.log, callback));
+			});
+		} else {
+			invalidate(key, logErrorAndCallback(this.log, callback));
+		}
 	}
 };
 

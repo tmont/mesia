@@ -103,6 +103,34 @@ describe('Caching', function() {
 				done();
 			});
 		});
+
+		it('should invalidate wildcard value using keys', function(done) {
+			var delKeys = [],
+				keys = 0;
+			var client = {
+				keys: function(pattern, callback) {
+					keys++;
+					pattern.should.equal('foo*');
+					callback(null, [ 'foo', 'foot', 'fook' ]);
+				},
+
+				del: function(key, callback) {
+					delKeys.push(key);
+					callback();
+				}
+			};
+
+			var cache = new caching.RedisCache(client, log);
+			cache.invalidate('foo*', function(err) {
+				should.not.exist(err);
+				keys.should.equal(1);
+				delKeys.should.have.length(3);
+				delKeys.should.containEql('foo');
+				delKeys.should.containEql('foot');
+				delKeys.should.containEql('fook');
+				done();
+			});
+		});
 	});
 
 	describe('JSON', function() {
