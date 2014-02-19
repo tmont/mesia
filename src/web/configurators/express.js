@@ -84,10 +84,10 @@ module.exports = function(container, libs) {
 		log.trace('middleware: request-locals');
 		var locals = {};
 		locals.req = req;
-		req.container.registerInstance({}, 'RequestLocals');
+		req.container.registerInstance(locals, 'RequestLocals');
 		var userId = req.session && req.session.user && req.session.user.id;
 		req.isAuthenticated = locals.isAuthenticated = !!userId;
-		log.trace('isAuthenticated: ' + req.isAuthenticated + (userId ? '(' + userId + ')' : ''));
+		log.trace('isAuthenticated: ' + req.isAuthenticated + (userId ? ' (' + userId + ')' : ''));
 		next();
 	});
 
