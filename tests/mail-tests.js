@@ -132,7 +132,8 @@ describe('Mail', function() {
 	describe('with templating', function() {
 		it('should generate body via template', function(done) {
 			var sendMail = 0;
-			var transport = new mail.MailTransport(__dirname + '/mail/templates');
+			var evaluator = new mail.EmailTemplateEvaluator(__dirname + '/mail/templates');
+			var transport = new mail.MailTransport(evaluator);
 			transport.sendMail = function(message, callback) {
 				sendMail++;
 				message.should.have.property('from', 'foo@bar.com');
@@ -186,8 +187,8 @@ describe('Mail', function() {
 			var config = {
 				directory: pickupDir
 			};
-
-			var mailer = new mail.NodeMailerPickupTransport(config, __dirname + '/mail/templates');
+			var evaluator = new mail.EmailTemplateEvaluator(__dirname + '/mail/templates');
+			var mailer = new mail.NodeMailerPickupTransport(config, evaluator);
 			var options = {
 				template: 'basic',
 				locals: {
