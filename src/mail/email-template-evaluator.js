@@ -27,3 +27,5 @@ EmailTemplateEvaluator.prototype.evaluateTemplate = function(template, locals, c
 		});
 	}
 };
+
+module.exports = EmailTemplateEvaluator;

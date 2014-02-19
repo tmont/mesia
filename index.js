@@ -9,6 +9,7 @@ module.exports = {
 	mail: {
 		MailTransport: require('./src/mail/mail-transport'),
 		NodeMailerSmtpTransport: require('./src/mail/nodemailer-smtp-transport'),
-		NodeMailerPickupTransport: require('./src/mail/nodemailer-pickup-transport')
+		NodeMailerPickupTransport: require('./src/mail/nodemailer-pickup-transport'),
+		EmailTemplateEvaluator: require('./src/mail/email-template-evaluator')
 	}
 };
