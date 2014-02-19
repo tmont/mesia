@@ -1,7 +1,7 @@
 module.exports = function(container, libs) {
 	var sahara = libs.sahara,
 		configurators = container.tryResolveSync('PerRequestConfigurators'),
-		log = resolveSync('Logger');
+		log = container.resolveSync('Logger');
 
 	return function(req, res, next) {
 		log.trace('middleware: per-request');
