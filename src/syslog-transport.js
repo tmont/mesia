@@ -20,10 +20,13 @@ util._extend(SyslogTransport.prototype, {
 			return;
 		}
 
+		var syslogSeverity = level;
 		if (level === 'error') {
-			level = 'err';
+			syslogSeverity = 'err';
 		} else if (level === 'warn') {
-			level = 'warning';
+			syslogSeverity = 'warning';
+		} else if (level === 'trace') {
+			syslogSeverity = 'debug';
 		}
 
 		var message = '[' + level + '] ' + msg;
@@ -40,7 +43,7 @@ util._extend(SyslogTransport.prototype, {
 			pid: this.showPid
 		};
 		posix.openlog(this.id, options, this.facility);
-		posix.syslog(level, message);
+		posix.syslog(syslogSeverity, message);
 		posix.closelog();
 
 		callback(null, true);
