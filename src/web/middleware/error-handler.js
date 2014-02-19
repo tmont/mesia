@@ -47,7 +47,8 @@ module.exports = function(container) {
 					res.render('errors/' + view, locals, function(err, str) {
 						if (err) {
 							log.error('Error rendering error view', err);
-							res.send('');
+							res.status(503);
+							res.send();
 						} else {
 							res.send(str);
 						}
