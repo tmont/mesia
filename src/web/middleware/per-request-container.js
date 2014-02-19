@@ -6,7 +6,7 @@ module.exports = function(container, libs) {
 	return function(req, res, next) {
 		log.trace('middleware: per-request');
 
-		var childContainer = container.createChildContainer()
+		var childContainer = container.createChildContainer(true)
 			.registerInstance(req, 'Request', sahara.lifetime.memory())
 			.registerInstance(req, 'Response', sahara.lifetime.memory());
 
