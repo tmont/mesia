@@ -1,42 +1,16 @@
-var initTemplates = require('email-templates');
-
 function addressToArray(address) {
 	return Array.isArray(address)
 		? address
 		: address.split(',').map(function(address) {
-			return address.trim();
-		});
+		return address.trim();
+	});
 }
 
-function MailTransport(templatesDir) {
-	this.templatesDir = templatesDir || null;
-	this.tmpl = null;
+function MailTransport(templateEvaluator) {
+	this.templateEvaluator = templateEvaluator || null;
 }
 
 MailTransport.prototype = {
-	evaluateTemplate: function(template, locals, callback) {
-		var self = this;
-		if (!this.tmpl) {
-			initTemplates(this.templatesDir, function(err, tmpl) {
-				if (err) {
-					callback(err);
-					return;
-				}
-
-				self.tmpl = tmpl;
-				evaluateTemplate();
-			});
-		} else {
-			evaluateTemplate();
-		}
-
-		function evaluateTemplate() {
-			self.tmpl(template, locals || {}, function(err, html, text) {
-				callback(err, { text: text, html: html });
-			});
-		}
-	},
-
 	send: function(from, to, subject, options, callback) {
 		if (typeof(options) === 'function') {
 			callback = options;
@@ -48,7 +22,8 @@ MailTransport.prototype = {
 		var self = this;
 
 		if (options.template) {
-			this.evaluateTemplate(options.template, options.locals, sendMessage);
+			this.templateEvaluator
+				.evaluateTemplate(options.template, options.locals, sendMessage);
 		} else {
 			var body = typeof(options.body) === 'string'
 				? { text: options.body }
@@ -78,10 +53,10 @@ MailTransport.prototype = {
 				'encoding',
 				'charset'
 			].forEach(function(option) {
-				if (option in options) {
-					message[option] = options[option];
-				}
-			});
+					if (option in options) {
+						message[option] = options[option];
+					}
+				});
 
 			[
 				'cc',
@@ -89,10 +64,10 @@ MailTransport.prototype = {
 				'replyTo',
 				'inReplyTo'
 			].forEach(function(option) {
-				if (option in options) {
-					message[option] = addressToArray(options[option]);
-				}
-			});
+					if (option in options) {
+						message[option] = addressToArray(options[option]);
+					}
+				});
 
 			self.sendMail(message, callback);
 		}
