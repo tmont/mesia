@@ -1,6 +1,7 @@
 module.exports = function(container) {
 	var log = container.resolveSync('Logger');
 	function sendErrorUsingController(err, req, res, route, callback) {
+		log.trace('attempting to send error using controller', err);
 		if (!req.container || !route) {
 			callback(true);
 			return;
@@ -24,6 +25,7 @@ module.exports = function(container) {
 	}
 
 	function sendErrorManually(err, req, res, route, view) {
+		log.trace('attempting to send error manually', err);
 		if (err.status || res.statusCode === 200) {
 			res.status(err.status || 500);
 		}

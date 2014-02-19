@@ -46,6 +46,7 @@ module.exports = function(parentContainer, libs) {
 				send(goa.json({ redirect: url }));
 			},
 			renderError: function(status, send, errorMessage, err) {
+				log.trace('rendering ' + status + ' error');
 				if (err && status >= 500) {
 					log.error(err);
 				}
@@ -62,6 +63,7 @@ module.exports = function(parentContainer, libs) {
 			},
 
 			doRender: function(viewName, locals, route, status, send, goaOptions) {
+				log.trace('rendering ' + viewName, route);
 				locals = locals || {};
 				var realLocals = container.tryResolveSync('RequestLocals') || {};
 				util._extend(realLocals, locals);
