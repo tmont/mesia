@@ -17,7 +17,7 @@ module.exports = function(key) {
 			conn.end(function(err) {
 				if (!err) {
 					log.debug('Database connection closed (' + key + ')');
-					container.registerInstance(false, 'DbConnected');
+					container.registerInstance(false, key + 'Connected');
 				}
 				callback(err);
 			});
