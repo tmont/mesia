@@ -12,6 +12,7 @@ module.exports = function(parentContainer, libs) {
 		sahara = libs.sahara;
 
 	return function(req, res, next) {
+		log.trace('middleware: controller-context');
 		var jadeOptions = {
 			debug: config.debugTemplates,
 			pretty: true

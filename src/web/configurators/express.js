@@ -39,6 +39,7 @@ module.exports = function(container, libs) {
 
 	//destruct!
 	app.use(function(req, res, next) {
+		log.trace('middleware: destructors');
 		var destructors = container.tryResolveSync('Destructors');
 		if (!destructors || !destructors.length) {
 			next();
@@ -46,6 +47,7 @@ module.exports = function(container, libs) {
 		}
 
 		res.on('finish', function() {
+			log.trace('response finished - destructing');
 			destructors = destructors.map(function(destructor) {
 				return function(callback) {
 					destructor(req.container, callback);
@@ -79,20 +81,19 @@ module.exports = function(container, libs) {
 
 	//set up request locals for use by other middleware
 	app.use(function(req, res, next) {
-		req.container.registerInstance({}, 'RequestLocals');
-		next();
-	});
-
-	//expose request and isAuthenticated in locals
-	app.use(function(req, res, next) {
-		var locals = req.container.resolveSync('RequestLocals');
+		log.trace('middleware: request-locals');
+		var locals = {};
 		locals.req = req;
-		req.isAuthenticated = locals.isAuthenticated = !!(req.session && req.session.user && req.session.user.id);
+		req.container.registerInstance({}, 'RequestLocals');
+		var userId = req.session && req.session.user && req.session.user.id;
+		req.isAuthenticated = locals.isAuthenticated = !!userId;
+		log.trace('isAuthenticated: ' + req.isAuthenticated + (userId ? '(' + userId + ')' : ''));
 		next();
 	});
 
 	//execute custom middleware
 	app.use(function(req, res, next) {
+		log.trace('middleware: app-middleware');
 		var middleware = req.container.tryResolveSync('Middleware');
 		if (!middleware || !middleware.length) {
 			next();

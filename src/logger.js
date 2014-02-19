@@ -110,6 +110,7 @@ Logger.prototype = {
 	warn: log('warn'),
 	error: log('error'),
 	middleware: function(req, res, next) {
+		this.trace('middleware: log');
 		if (!this.isDebugEnabled()) {
 			next();
 			return;
