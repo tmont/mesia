@@ -15,10 +15,11 @@ function Logger(logger, options) {
 }
 
 Logger.levels = {
-	debug: 0,
-	info: 1,
-	warn: 2,
-	error: 3
+	trace: 0,
+	debug: 1,
+	info: 2,
+	warn: 3,
+	error: 4
 };
 
 Logger.colors = {
