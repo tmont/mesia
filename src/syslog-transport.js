@@ -29,7 +29,8 @@ util._extend(SyslogTransport.prototype, {
 			syslogSeverity = 'debug';
 		}
 
-		var message = '[' + level + '] ' + msg;
+		var message = msg,
+			prepend = '[' + level + '] ';
 		if (typeof(meta) === 'string') {
 			message += ' ' + meta;
 		} else if (meta && typeof(meta) === 'object' && Object.keys(meta).length > 0) {
@@ -38,12 +39,28 @@ util._extend(SyslogTransport.prototype, {
 
 		message = message.replace(/\u001b\[(\d+(;\d+)*)?m/g, '');
 
+		//truncate message to a max of 1024 bytes
+		//we'll just use characters though, because that's easier
+		//plus splitting a 3-byte character into less than 3-bytes
+		//wouldn't make a lot of sense anyway
+		var messages = [];
+
+		var maxLength = 1024 - prepend.length;
+		while (message.length > maxLength) {
+			messages.push(prepend + message.substring(0, maxLength));
+			message = message.substring(maxLength);
+		}
+
+		messages.push(prepend + message);
+
 		var options = {
 			cons: true,
 			pid: this.showPid
 		};
 		posix.openlog(this.id, options, this.facility);
-		posix.syslog(syslogSeverity, message);
+		messages.forEach(function(message) {
+			posix.syslog(syslogSeverity, message);
+		});
 		posix.closelog();
 
 		callback(null, true);
