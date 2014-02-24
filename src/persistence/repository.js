@@ -1,6 +1,8 @@
 var EventEmitter = require('events').EventEmitter,
 	util = require('util');
 
+require('colors');
+
 function Repository(executor, type, cache, validatorFactory) {
 	EventEmitter.call(this);
 	this.executor = executor;
@@ -163,10 +165,7 @@ util._extend(Repository.prototype, {
 		this.cache.get(cacheKey, function(err, json) {
 			var elapsed = (Date.now() - start);
 			if (typeof(json) !== 'undefined') {
-				self.cache.log.debug(
-					'cache \x1B[32mhit\x1B[39m: \x1B[33m' + cacheKey +
-					'\x1B[39m [' + elapsed + 'ms]'
-				);
+				self.cache.log.debug( 'cache ' + 'hit'.green + ': ' + cacheKey.yellow + ' [' + elapsed + 'ms]');
 				onHit(json, done);
 				return;
 			}
@@ -174,10 +173,7 @@ util._extend(Repository.prototype, {
 			if (err) {
 				self.cache.log.error(err);
 			} else {
-				self.cache.log.debug(
-					'cache \x1B[31mmiss\x1B[39m: \x1B[33m' + cacheKey +
-					'\x1B[39m [' + elapsed + 'ms]'
-				);
+				self.cache.log.debug('cache ' + 'miss'.red + ': ' + cacheKey.yellow + ' [' + elapsed + 'ms]');
 			}
 
 			onMiss(function(err, result) {

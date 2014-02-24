@@ -3,6 +3,8 @@ var cluster = require('cluster'),
 	SyslogTransport = require('./syslog-transport'),
 	winston = require('winston');
 
+require('colors');
+
 function Logger(logger, options) {
 	options = options || {};
 
@@ -126,22 +128,22 @@ Logger.prototype = {
 		res.on('finish', function() {
 			var elapsed = (Date.now() - start);
 			if (elapsed >= 500) {
-				elapsed = '\x1B[31m' + elapsed + 'ms\x1B[39m';
+				elapsed = elapsed.red;
 			} else if (elapsed >= 250) {
-				elapsed = '\x1B[35m' + elapsed + 'ms\x1B[39m';
+				elapsed = elapsed.magenta;
 			} else if (elapsed >= 100) {
-				elapsed = '\x1B[36m' + elapsed + 'ms\x1B[39m';
+				elapsed = elapsed.cyan;
 			} else {
 				elapsed += 'ms';
 			}
 
 			var status = res.statusCode;
 			if (status < 300) {
-				status = '\x1B[32m' + status + '\x1B[39m';
+				status = status.green;
 			} else if (status < 400) {
-				status = '\x1B[33m' + status + '\x1B[39m';
+				status = status.yellow;
 			} else {
-				status = '\x1B[31m' + status + '\x1B[39m';
+				status = status.red;
 			}
 
 			log.debug([ elapsed, status, signature ].join(' '));

@@ -1,6 +1,8 @@
 var SqlExecutor = require('../../persistence/sql-executor.js'),
 	util = require('util');
 
+require('colors');
+
 module.exports = function(key, dbKey) {
 	return function(container, libs) {
 		var sahara = libs.sahara;
@@ -26,9 +28,9 @@ module.exports = function(key, dbKey) {
 						if (typeof(data.query) !== 'string') {
 							query = data.query.text + ' :: ' + util.inspect(data.query.values);
 						}
-						var header = data.name ? '\x1B[35m' + data.name + '\x1B[39m' : 'SQL';
-						var message = header + '[' + data.elapsed + 'ms]\n' + '\x1B[34m' + query + '\x1B[39m';
-						message += ' ' + '\x1B[33m' + data.summary + '\x1B[39m';
+						var header = data.name ? data.name.magenta : 'SQL';
+						var message = header + '[' + data.elapsed + 'ms]\n' + query.blue;
+						message += ' ' + data.summary.yellow;
 						log.debug(message);
 					});
 				}
@@ -40,7 +42,7 @@ module.exports = function(key, dbKey) {
 							query = data.query.text + ' :: ' + util.inspect(data.query.values);
 						}
 						log.warn('Slow query (' + data.elapsed + 'ms)');
-						log.warn('\x1B[34m' + query + '\x1B[39m');
+						log.warn(query.red);
 					}
 				});
 

@@ -14,6 +14,7 @@
 		"async": "0.2.10",
 		"posix": "1.0.3",
 		"mime": "1.2.11",
+		"colors": "0.6.2",
 		"moment-timezone": "0.0.3",
 		"nodemailer": "0.6.0",
 		"email-templates": "0.1.1"

@@ -1,4 +1,5 @@
 var async = require('async');
+require('colors');
 
 function logErrorAndCallback(log, callback) {
 	return function(err) {
@@ -40,7 +41,7 @@ RedisCache.prototype = {
 			return;
 		}
 
-		this.log.debug('setting cache value at \x1B[33m' + key + '\x1B[39m with ttl \x1B[33m' + ttl + '\x1B[39m');
+		this.log.debug('setting cache value at ' + key.cyan + 'with ttl ' + ttl.yellow);
 		this.client.setex(key, ttl, value, logErrorAndCallback(this.log, callback));
 	},
 
@@ -49,7 +50,7 @@ RedisCache.prototype = {
 			self = this;
 
 		function invalidate(key, next) {
-			self.log.debug('invalidating cache key \x1B[33m' + key + '\x1B[39m');
+			self.log.debug('invalidating cache key ' + key.yellow);
 			self.client.del(key, next);
 		}
 
