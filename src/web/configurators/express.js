@@ -84,10 +84,12 @@ module.exports = function(container, libs) {
 	//set up request locals for use by other middleware
 	app.use(function(req, res, next) {
 		log.trace('middleware: request-locals');
-		var locals = {};
+		var container = req.container,
+			locals = {};
+
 		locals.req = req;
 		locals.csrfToken = container.resolveSync('CSRFToken');
-		req.container.registerInstance(locals, 'RequestLocals');
+		container.registerInstance(locals, 'RequestLocals');
 		var userId = req.session && req.session.user && req.session.user.id;
 		req.isAuthenticated = locals.isAuthenticated = !!userId;
 		log.trace('isAuthenticated: ' + req.isAuthenticated + (userId ? ' (' + userId + ')' : ''));
