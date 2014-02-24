@@ -9,7 +9,6 @@ module.exports = function(container, libs) {
 
 		var childContainer = container.createChildContainer(true)
 			.registerInstance(req, 'Request', sahara.lifetime.memory())
-			.registerInstance(req.csrfToken(), 'CSRFToken', sahara.lifetime.memory())
 			.registerInstance(req, 'Response', sahara.lifetime.memory());
 
 		if (configurators) {

@@ -75,10 +75,6 @@ module.exports = function(container, libs) {
 		store: sessionStore
 	}));
 
-
-	//must come AFTER session middleware
-	app.use(app.express.csrf());
-
 	//set up per-request container
 	app.use(require('../middleware/per-request-container')(container, libs));
 
@@ -92,7 +88,6 @@ module.exports = function(container, libs) {
 			locals = {};
 
 		locals.req = req;
-		locals.csrfToken = container.resolveSync('CSRFToken');
 		container.registerInstance(locals, 'RequestLocals');
 		var userId = req.session && req.session.user && req.session.user.id;
 		req.isAuthenticated = locals.isAuthenticated = !!userId;
@@ -116,6 +111,17 @@ module.exports = function(container, libs) {
 		});
 
 		async.series(middleware, next);
+	});
+
+	//must come AFTER session middleware
+	app.use(app.express.csrf());
+
+	app.use(function(req, res, next) {
+		//inject csrf token into container
+		var token = req.csrfToken();
+		log.debug('CSRF token: ' + token);
+		req.container.registerInstance(token, 'CSRFToken');
+		next();
 	});
 
 	//dear god, this MUST BE SECOND-TO-LAST
