@@ -73,6 +73,8 @@ module.exports = function(container, libs) {
 		store: sessionStore
 	}));
 
+	app.use(app.express.csrf());
+
 	//set up per-request container
 	app.use(require('../middleware/per-request-container')(container, libs));
 
@@ -84,6 +86,7 @@ module.exports = function(container, libs) {
 		log.trace('middleware: request-locals');
 		var locals = {};
 		locals.req = req;
+		locals.csrfToken = container.resolveSync('CSRFToken');
 		req.container.registerInstance(locals, 'RequestLocals');
 		var userId = req.session && req.session.user && req.session.user.id;
 		req.isAuthenticated = locals.isAuthenticated = !!userId;
