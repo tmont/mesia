@@ -5,6 +5,7 @@ module.exports = function(container, libs) {
 
 	return function(req, res, next) {
 		log.trace('middleware: per-request');
+		log.debug('CSRF Token: ' + req.csrfToken());
 
 		var childContainer = container.createChildContainer(true)
 			.registerInstance(req, 'Request', sahara.lifetime.memory())
