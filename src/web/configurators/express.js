@@ -14,8 +14,10 @@ module.exports = function(container, libs) {
 	app.enable('strict routing');
 	app.enable('case sensitive routing');
 	if (!config.cacheViews) {
+		log.debug('disabling view cache');
 		app.disable('view cache');
 	} else {
+		log.debug('enabling view cache');
 		app.enable('view cache');
 	}
 	app.set('views', path.join(root, 'views'));
@@ -73,6 +75,8 @@ module.exports = function(container, libs) {
 		store: sessionStore
 	}));
 
+
+	//must come AFTER session middleware
 	app.use(app.express.csrf());
 
 	//set up per-request container
@@ -92,7 +96,7 @@ module.exports = function(container, libs) {
 		container.registerInstance(locals, 'RequestLocals');
 		var userId = req.session && req.session.user && req.session.user.id;
 		req.isAuthenticated = locals.isAuthenticated = !!userId;
-		log.trace('isAuthenticated: ' + req.isAuthenticated + (userId ? ' (' + userId + ')' : ''));
+		log.debug('isAuthenticated: ' + req.isAuthenticated + (userId ? ' (' + userId + ')' : ''));
 		next();
 	});
 

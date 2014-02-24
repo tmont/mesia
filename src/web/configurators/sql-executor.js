@@ -33,6 +33,17 @@ module.exports = function(key, dbKey) {
 					});
 				}
 
+				executor.on('queried', function(data) {
+					if (data.elapsed > 100) {
+						var query = data.query;
+						if (typeof(data.query) !== 'string') {
+							query = data.query.text + ' :: ' + util.inspect(data.query.values);
+						}
+						log.warn('Slow query (' + data.elapsed + 'ms)');
+						log.warn('\x1B[34m' + query + '\x1B[39m');
+					}
+				});
+
 				callback(null, executor);
 			});
 		}

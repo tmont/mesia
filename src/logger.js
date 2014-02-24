@@ -121,7 +121,7 @@ Logger.prototype = {
 			start = Date.now(),
 			log = this;
 
-		log.debug(signature);
+		log.info(signature);
 
 		res.on('finish', function() {
 			var elapsed = (Date.now() - start);
