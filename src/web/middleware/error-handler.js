@@ -66,11 +66,12 @@ module.exports = function(container) {
 			log.error(err);
 		}
 
-		var view = '500';
-		switch (res.statusCode) {
+		var view = '500',
+			status = err.status || res.statusCode;
+		switch (status) {
 			case 403:
 			case 404:
-				view = res.statusCode.toString();
+				view = status.toString();
 				break;
 		}
 
