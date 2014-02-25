@@ -41,7 +41,7 @@ RedisCache.prototype = {
 			return;
 		}
 
-		this.log.debug('setting cache value at ' + key.cyan + 'with ttl ' + ttl.yellow);
+		this.log.debug('setting cache value at ' + key.cyan + ' with ttl ' + ttl.toString().yellow);
 		this.client.setex(key, ttl, value, logErrorAndCallback(this.log, callback));
 	},
 
