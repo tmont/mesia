@@ -62,7 +62,12 @@ module.exports = function(container) {
 	}
 
 	return function(err, req, res, next) {
-		if (!err.status || err.status >= 500) {
+		log.trace('Express error handler');
+		if (log.isDebugEnabled()) {
+			//log all errors when in debug mode
+			log.error(err);
+		} else if (!err.status || err.status >= 500) {
+			//only log server errors otherwise
 			log.error(err);
 		}
 
