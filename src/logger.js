@@ -114,16 +114,16 @@ Logger.prototype = {
 	error: log('error'),
 	middleware: function(req, res, next) {
 		this.trace('middleware: log');
-		if (!this.isDebugEnabled()) {
-			next();
-			return;
-		}
-
 		var signature = req.method + ' ' + req.url + ' HTTP/' + req.httpVersion,
 			start = Date.now(),
 			log = this;
 
 		log.info(signature);
+
+		if (!this.isDebugEnabled()) {
+			next();
+			return;
+		}
 
 		res.on('finish', function() {
 			var elapsed = (Date.now() - start);
