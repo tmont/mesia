@@ -113,17 +113,6 @@ module.exports = function(container, libs) {
 		async.series(middleware, next);
 	});
 
-	//must come AFTER session middleware
-	app.use(app.express.csrf());
-
-	app.use(function(req, res, next) {
-		//inject csrf token into container
-		var token = req.csrfToken();
-		log.debug('CSRF token: ' + token);
-		req.container.registerInstance(token, 'CSRFToken');
-		next();
-	});
-
 	//dear god, this MUST BE SECOND-TO-LAST
 	app.use(app.router);
 
