@@ -2,7 +2,7 @@ var stringUtils = require('../../utils'),
 	path = require('path'),
 	async = require('async');
 
-module.exports = function(container, libs) {
+module.exports = function(container, libs, next) {
 	var app = container.resolveSync('App'),
 		config = container.resolveSync('Config'),
 		log = container.resolveSync('Logger'),
@@ -117,4 +117,5 @@ module.exports = function(container, libs) {
 
 	//dear god, this MUST BE LAST!
 	app.use(require('../middleware/error-handler')(container));
+	next();
 };

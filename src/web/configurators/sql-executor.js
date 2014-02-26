@@ -4,7 +4,7 @@ var SqlExecutor = require('../../persistence/sql-executor.js'),
 require('colors');
 
 module.exports = function(key, dbKey) {
-	return function(container, libs) {
+	return function(container, libs, next) {
 		var sahara = libs.sahara;
 
 		function createQueryExecutor(container, callback) {
@@ -51,5 +51,6 @@ module.exports = function(key, dbKey) {
 		}
 
 		container.registerFactory(createQueryExecutor, key, sahara.lifetime.memory());
+		next();
 	};
 };
