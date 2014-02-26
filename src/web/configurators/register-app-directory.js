@@ -2,7 +2,7 @@ var path = require('path'),
 	fs = require('fs');
 
 module.exports = function(relativeDir) {
-	return function(container) {
+	return function(container, libs, next) {
 		var root = container.resolveSync('AppRoot'),
 			dir = path.join(root, relativeDir),
 			files = fs.readdirSync(dir);
@@ -15,5 +15,7 @@ module.exports = function(relativeDir) {
 			var absolutePath = path.join(dir, file);
 			container.registerType(require(absolutePath));
 		});
+
+		next();
 	};
 };

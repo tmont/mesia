@@ -1,4 +1,4 @@
-module.exports = function(container, libs) {
+module.exports = function(container, libs, next) {
 	var cfg = container.resolveSync('Config').memcached,
 		log = container.resolveSync('Logger'),
 		Memcached = libs.memcached,
@@ -24,4 +24,5 @@ module.exports = function(container, libs) {
 	});
 
 	container.registerInstance(client, 'CacheClient', lifetime.memory());
+	next();
 };

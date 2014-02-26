@@ -1,6 +1,6 @@
 module.exports = function(cfg, key) {
 	var connectedKey = key + 'Connected';
-	return function(container, libs) {
+	return function(container, libs, next) {
 		var mysql = libs.mysql,
 			sahara = libs.sahara;
 
@@ -52,5 +52,6 @@ module.exports = function(cfg, key) {
 		}
 
 		container.registerFactory(createMariaConnection, key, sahara.lifetime.memory());
+		next();
 	};
 };
