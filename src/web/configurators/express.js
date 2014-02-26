@@ -6,9 +6,7 @@ module.exports = function(container, libs) {
 	var app = container.resolveSync('App'),
 		config = container.resolveSync('Config'),
 		log = container.resolveSync('Logger'),
-		root = container.resolveSync('AppRoot'),
-		routeLocals = container.resolveSync('RouteLocals'),
-		sessionStore = container.resolveSync('SessionStore');
+		routeLocals = container.resolveSync('RouteLocals');
 
 	app.enable('trust proxy');
 	app.enable('strict routing');
@@ -20,22 +18,23 @@ module.exports = function(container, libs) {
 		log.debug('enabling view cache');
 		app.enable('view cache');
 	}
-	app.set('views', path.join(root, 'views'));
+	app.set('views', path.join(container.resolveSync('AppRoot'), 'views'));
 	app.set('view engine', 'jade');
 
 	//expose some locals for use in templates
 	app.locals.pretty = true;
 	app.locals.config = {
-		host: config.host,
 		staticBasePath: config.staticBasePath,
 		scheme: config.scheme
 	};
-	for (var local in routeLocals) {
-		app.locals[local] = routeLocals[local];
-	}
+
 	app.locals.formatDate = stringUtils.formatDate;
 	app.locals.formatNumber = stringUtils.formatNumber;
 	app.locals.formatMoney = stringUtils.formatMoney;
+
+	for (var local in routeLocals) {
+		app.locals[local] = routeLocals[local];
+	}
 
 	app.use(log.middleware.bind(log));
 
@@ -72,7 +71,7 @@ module.exports = function(container, libs) {
 		secret: config.session.secret,
 		key: config.session.key,
 		proxy: true,
-		store: sessionStore
+		store: container.resolveSync('SessionStore')
 	}));
 
 	//set up per-request container
