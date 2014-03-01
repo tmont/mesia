@@ -37,7 +37,7 @@ module.exports = function(parentContainer, libs) {
 			templateCompiler: templateCompiler,
 			log: log,
 			redirect: function(url, send) {
-				var accepts = this.req.accepts(['json', 'html']);
+				var accepts = this.req.accepts(['html', 'json']);
 
 				switch (accepts) {
 					case 'html':
@@ -69,7 +69,7 @@ module.exports = function(parentContainer, libs) {
 
 			doRender: function(viewName, locals, route, status, send, goaOptions) {
 				log.trace('rendering ' + viewName, route);
-				var accepts = this.req.accepts(['json','html']);
+				var accepts = this.req.accepts(['html', 'json']);
 				locals = locals || {};
 				var realLocals = container.tryResolveSync('RequestLocals') || {};
 				util._extend(realLocals, locals);
