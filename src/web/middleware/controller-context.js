@@ -47,7 +47,7 @@ module.exports = function(parentContainer, libs) {
 						send(goa.json({ redirect: url }));
 						return;
 					default:
-						send(goa.error());
+						send(goa.error(null, 406));
 				}
 			},
 			renderError: function(status, send, errorMessage, err) {
@@ -120,7 +120,7 @@ module.exports = function(parentContainer, libs) {
 					});
 				}
 				else {
-					send(goa.error());
+					send(goa.error(null, 406));
 				}
 
 				function compilePartials(next) {
