@@ -126,7 +126,7 @@ Logger.prototype = {
 		}
 
 		res.on('finish', function() {
-			var elapsed = (Date.now() - start).toString();
+			var elapsed = (Date.now() - start) + 'ms';
 			if (elapsed >= 500) {
 				elapsed = elapsed.red;
 			} else if (elapsed >= 250) {
@@ -134,8 +134,6 @@ Logger.prototype = {
 			} else if (elapsed >= 100) {
 				elapsed = elapsed.cyan;
 			}
-
-			elapsed += 'ms';
 
 			var status = res.statusCode.toString();
 			if (status < 300) {
