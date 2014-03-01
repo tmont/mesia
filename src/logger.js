@@ -126,13 +126,19 @@ Logger.prototype = {
 		}
 
 		res.on('finish', function() {
-			var elapsed = (Date.now() - start) + 'ms';
+			var elapsed = (Date.now() - start),
+				elapsedColor = '';
 			if (elapsed >= 500) {
-				elapsed = elapsed.red;
+				elapsedColor = 'red';
 			} else if (elapsed >= 250) {
-				elapsed = elapsed.magenta;
+				elapsedColor = 'magenta';
 			} else if (elapsed >= 100) {
-				elapsed = elapsed.cyan;
+				elapsedColor = 'cyan';
+			}
+
+			elapsed += 'ms';
+			if (elapsedColor) {
+				elapsed = elapsed[elapsedColor];
 			}
 
 			var status = res.statusCode.toString();
