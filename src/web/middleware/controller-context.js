@@ -35,15 +35,20 @@ module.exports = function(parentContainer, libs) {
 			req: req,
 			res: res,
 			templateCompiler: templateCompiler,
-			isContentRequest: false,
 			log: log,
 			redirect: function(url, send) {
-				if (!this.isContentRequest) {
-					send(goa.redirect(url));
-					return;
-				}
+				var accepts = this.req.accepts(['json', 'html']);
 
-				send(goa.json({ redirect: url }));
+				switch (accepts) {
+					case 'html':
+						send(goa.redirect(url));
+						return;
+					case 'json':
+						send(goa.json({ redirect: url }));
+						return;
+					default:
+						send(goa.error(null, 406));
+				}
 			},
 			renderError: function(status, send, errorMessage, err) {
 				log.trace('rendering ' + status + ' error');
@@ -64,6 +69,7 @@ module.exports = function(parentContainer, libs) {
 
 			doRender: function(viewName, locals, route, status, send, goaOptions) {
 				log.trace('rendering ' + viewName, route);
+				var accepts = this.req.accepts(['json','html']);
 				locals = locals || {};
 				var realLocals = container.tryResolveSync('RequestLocals') || {};
 				util._extend(realLocals, locals);
@@ -75,8 +81,10 @@ module.exports = function(parentContainer, libs) {
 
 				realLocals.info = response.info;
 
-				if (!this.isContentRequest) {
-					compilePartials(function(err) {
+				var self = this;
+				if (accepts === 'html') {
+					this.res.type(accepts);
+					compilePartials(function (err) {
 						if (err) {
 							send(goa.error(err, 500));
 							return;
@@ -88,29 +96,32 @@ module.exports = function(parentContainer, libs) {
 						});
 						send(goa.view(viewName, realLocals, goaOptions));
 					});
-					return;
 				}
-
-				var self = this;
-				async.parallel([ compileTemplate, compilePartials ], function(err) {
-					if (err) {
-						log.error('Error rendering template', err);
-						if (status < 400) {
-							//render the error template
-							if (err.code === 'ENOENT') {
-								self.renderError(404, send, null, err);
-							} else {
-								self.renderError(500, send, null, err);
+				else if (accepts === 'json') {
+					this.res.type(accepts);
+					async.parallel([ compileTemplate, compilePartials ], function (err) {
+						if (err) {
+							log.error('Error rendering template', err);
+							if (status < 400) {
+								//render the error template
+								if (err.code === 'ENOENT') {
+									self.renderError(404, send, null, err);
+								} else {
+									self.renderError(500, send, null, err);
+								}
+								return;
 							}
-							return;
+
+							//error rendering error template, uh oh
+							response.message = 'Error rendering error';
 						}
 
-						//error rendering error template, uh oh
-						response.message = 'Error rendering error';
-					}
-
-					send(goa.json(response, status));
-				});
+						send(goa.json(response, status));
+					});
+				}
+				else {
+					send(goa.error(null, 406));
+				}
 
 				function compilePartials(next) {
 					var templates = partials[viewName];
