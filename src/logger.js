@@ -54,6 +54,11 @@ Logger.transports = {
 
 Logger.create = function(config) {
 	var transports = (config.transports || []).map(function(name) {
+		if (typeof(name) === 'object') {
+			//already a transport
+			return name;
+		}
+
 		return Logger.transports[name](config);
 	});
 
