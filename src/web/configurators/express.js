@@ -36,6 +36,12 @@ module.exports = function(container, libs, next) {
 		app.locals[local] = routeLocals[local];
 	}
 
+	//lol
+	app.use(function(req, res, next) {
+		res.header('X-Powered-By', 'Crystalis');
+		next();
+	});
+
 	app.use(log.middleware.bind(log));
 
 	//destruct!
