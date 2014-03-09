@@ -36,7 +36,7 @@ module.exports = function(cfg, key) {
 					return;
 				}
 
-				log.error('MariaDB disconnected or crashed, attempting to reconnect');
+				log.error('MariaDB disconnected or crashed, attempting to reconnect', err);
 				createMariaConnection(container, function(err, conn) {
 					//don't invoke callback
 					if (err) {
