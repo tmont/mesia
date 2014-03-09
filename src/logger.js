@@ -1,6 +1,5 @@
 var cluster = require('cluster'),
 	util = require('util'),
-	SyslogTransport = require('./syslog-transport'),
 	winston = require('winston');
 
 require('colors');
@@ -35,15 +34,6 @@ Logger.colors = {
 winston.addColors(Logger.colors);
 
 Logger.transports = {
-	syslog: function(options) {
-		return new SyslogTransport({
-			level: options.level,
-			id: options.id,
-			facility: options.facility,
-			showPid: options.showPid
-		});
-	},
-
 	console: function(options) {
 		return new winston.transports.Console({
 			timestamp: options.timestamps === 'verbose' ? true : function() {
