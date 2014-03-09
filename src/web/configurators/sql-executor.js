@@ -3,7 +3,7 @@ var SqlExecutor = require('../../persistence/sql-executor.js'),
 
 require('colors');
 
-module.exports = function(key, dbKey) {
+module.exports = function(key, dbKey, slowQueryThreshold) {
 	return function(container, libs, next) {
 		var sahara = libs.sahara;
 
@@ -35,16 +35,18 @@ module.exports = function(key, dbKey) {
 					});
 				}
 
-				executor.on('queried', function(data) {
-					if (data.elapsed > 100) {
-						var query = data.query;
-						if (typeof(data.query) !== 'string') {
-							query = data.query.text + ' :: ' + util.inspect(data.query.values);
+				if (slowQueryThreshold) {
+					executor.on('queried', function(data) {
+						if (data.elapsed > slowQueryThreshold) {
+							var query = data.query;
+							if (typeof(data.query) !== 'string') {
+								query = data.query.text + ' :: ' + util.inspect(data.query.values);
+							}
+							log.warn('Slow query (' + data.elapsed + 'ms)');
+							log.warn(query.red);
 						}
-						log.warn('Slow query (' + data.elapsed + 'ms)');
-						log.warn(query.red);
-					}
-				});
+					});
+				}
 
 				callback(null, executor);
 			});
