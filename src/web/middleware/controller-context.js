@@ -47,7 +47,7 @@ module.exports = function(parentContainer, libs) {
 						send(goa.json({ redirect: url }));
 						return;
 					default:
-						send(goa.error(null, 406));
+						send(goa.error(new Error('Accept must be html or json'), 406));
 				}
 			},
 			renderError: function(status, send, errorMessage, err) {
@@ -120,7 +120,7 @@ module.exports = function(parentContainer, libs) {
 					});
 				}
 				else {
-					send(goa.error(null, 406));
+					send(goa.error(new Error('Accept must be json or html'), 406));
 				}
 
 				function compilePartials(next) {
