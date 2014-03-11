@@ -25,15 +25,18 @@ module.exports = function(container) {
 	}
 
 	function sendErrorManually(err, req, res, route, view) {
-		log.trace('attempting to send error manually', err);
+		log.warn('attempting to send error manually', err);
 		if (err.status || res.statusCode === 200) {
 			res.status(err.status || 500);
 		}
 
-		switch (res.get('Content-Type')) {
-			case 'application/json':
-				res.send({ message: err.clientMessage || '' });
+		var accepts = req.accepts(['html', 'json']);
+
+		switch (accepts) {
+			case 'json':
+				res.send({ message: err.clientMessage || 'An error occurred' });
 				break;
+			case 'html':
 			default:
 				try {
 					var locals = {
