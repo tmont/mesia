@@ -1,4 +1,5 @@
 var EventEmitter = require('events').EventEmitter,
+	async = require('async'),
 	util = require('util');
 
 require('colors');
@@ -150,7 +151,14 @@ util._extend(Repository.prototype, {
 				return;
 			}
 
-			callback(null, results.map(self.createEntity.bind(self)));
+			function createEntity(row, next) {
+				self.createEntity(row);
+				next();
+			}
+
+			//put this into the event loop so complex object mappings don't
+			//block the entire app
+			async.map(results, createEntity, callback);
 		});
 	},
 
