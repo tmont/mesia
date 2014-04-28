@@ -23,6 +23,11 @@ module.exports = function(container, libs, next) {
 	}
 	app.set('views', path.join(container.resolveSync('AppRoot'), 'views'));
 	app.set('view engine', 'jade');
+	
+	container
+		.registerInstance('ExpressSession', expressSession)
+		.registerInstance('BodyParser', bodyParser)
+		.registerInstance('CookieParser', cookieParser);
 
 	//expose some locals for use in templates
 	app.locals.pretty = true;
