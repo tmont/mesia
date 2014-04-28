@@ -2,6 +2,7 @@ var stringUtils = require('../../utils'),
 	path = require('path'),
 	async = require('async'),
 	bodyParser = require('body-parser'),
+	csurf = require('csurf'),
 	expressSession = require('express-session'),
 	cookieParser = require('cookie-parser');
 
@@ -74,6 +75,7 @@ module.exports = function(container, libs, next) {
 
 	//set up default middleware
 	app.use(cookieParser());
+	app.use(csurf());
 	app.use(bodyParser());
 	app.use(expressSession({
 		secret: config.session.secret,
