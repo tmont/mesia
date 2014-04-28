@@ -152,12 +152,14 @@ util._extend(Repository.prototype, {
 			}
 
 			function createEntity(row, next) {
-				next(null, self.createEntity(row));
+				setImmediate(function() {
+					next(null, self.createEntity(row));
+				});
 			}
 
 			//put this into the event loop so complex object mappings don't
 			//block the entire app
-			async.map(results, createEntity, callback);
+			async.mapLimit(results, 20, createEntity, callback);
 		});
 	},
 
