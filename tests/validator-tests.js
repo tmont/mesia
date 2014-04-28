@@ -316,7 +316,7 @@ describe('Validator', function() {
 		});
 
 		it('invalid moment should not pass validation for date', function(done) {
-			var entity = { id: moment('asdf') };
+			var entity = { id: moment(new Date('asdf')) };
 
 			var validator = new Validator()
 				.map('id', validators.date);
