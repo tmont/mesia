@@ -214,4 +214,41 @@ describe('Repository', function() {
 			done();
 		});
 	});
+
+	it('should map rows to entities', function(done) {
+		function Foo() {
+			this.foo = null;
+			this.bar = null;
+		}
+
+		Foo.fromQueryResult = function(data) {
+			var foo = new Foo();
+			foo.foo = data.foo || null;
+			foo.bar = data.bar || null;
+			return foo;
+		};
+
+		var repo = new Repository({}, Foo);
+		var query = {};
+
+		repo.execute = function(query, options, callback) {
+			callback(null, [
+				{ foo: 'foo' },
+				{ bar: 'bar' }
+			]);
+		};
+
+		repo.executeAndMapEntity(query, function(err, entities) {
+			should.not.exist(err);
+			entities.should.have.length(2);
+
+			entities[0].should.have.property('foo', 'foo');
+			entities[0].should.have.property('bar', null);
+
+			entities[1].should.have.property('foo', null);
+			entities[1].should.have.property('bar', 'bar');
+
+			done();
+		});
+	});
 });

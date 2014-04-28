@@ -152,8 +152,7 @@ util._extend(Repository.prototype, {
 			}
 
 			function createEntity(row, next) {
-				self.createEntity(row);
-				next();
+				next(null, self.createEntity(row));
 			}
 
 			//put this into the event loop so complex object mappings don't
