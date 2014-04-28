@@ -30,13 +30,10 @@ module.exports = function(container) {
 			res.status(err.status || 500);
 		}
 
-		var accepts = req.accepts(['html', 'json']);
-
-		switch (accepts) {
-			case 'json':
-				res.send({ message: err.clientMessage || 'An error occurred' });
+		switch (res.get('Content-Type')) {
+			case 'application/json':
+				res.send({ message: err.clientMessage || '' });
 				break;
-			case 'html':
 			default:
 				try {
 					var locals = {
