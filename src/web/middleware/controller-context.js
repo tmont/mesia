@@ -158,7 +158,6 @@ module.exports = function(parentContainer, libs) {
 						//merge in locals from app
 						var locals = util._extend({}, realLocals);
 						Object.keys(app.locals).forEach(function(key) {
-							//fucking express
 							locals[key] = app.locals[key];
 						});
 
