@@ -1,6 +1,9 @@
 var stringUtils = require('../../utils'),
 	path = require('path'),
-	async = require('async');
+	async = require('async'),
+	bodyParser = require('body-parser'),
+	expressSession = require('express-session'),
+	cookieParser = require('cookie-parser');
 
 module.exports = function(container, libs, next) {
 	var app = container.resolveSync('App'),
@@ -70,10 +73,9 @@ module.exports = function(container, libs, next) {
 	});
 
 	//set up default middleware
-	app.use(app.express.methodOverride());
-	app.use(app.express.cookieParser());
-	app.use(app.express.bodyParser());
-	app.use(app.express.session({
+	app.use(cookieParser());
+	app.use(bodyParser());
+	app.use(expressSession({
 		secret: config.session.secret,
 		key: config.session.key,
 		proxy: true,
@@ -118,10 +120,5 @@ module.exports = function(container, libs, next) {
 		async.series(middleware, next);
 	});
 
-	//dear god, this MUST BE SECOND-TO-LAST
-	app.use(app.router);
-
-	//dear god, this MUST BE LAST!
-	app.use(require('../middleware/error-handler')(container));
 	next();
 };
