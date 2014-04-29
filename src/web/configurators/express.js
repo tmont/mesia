@@ -3,6 +3,7 @@ var stringUtils = require('../../utils'),
 	async = require('async'),
 	bodyParser = require('body-parser'),
 	expressSession = require('express-session'),
+	multipartParser = require('connect-multiparty'),
 	cookieParser = require('cookie-parser');
 
 module.exports = function(container, libs, next) {
@@ -80,6 +81,7 @@ module.exports = function(container, libs, next) {
 	//set up default middleware
 	app.use(cookieParser());
 	app.use(bodyParser());
+	app.use(multipartParser());
 	app.use(expressSession({
 		secret: config.session.secret,
 		key: config.session.key,
