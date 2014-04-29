@@ -38,7 +38,7 @@ Logger.transports = {
 		var timestamp = false;
 		if (options.timestamps === 'verbose') {
 			timestamp = true;
-		} else if (options.timestamps === 'dev') {
+		} else if (options.timestamps === 'quiet') {
 			timestamp = function() {
 				var date = new Date(),
 					ms = date.getMilliseconds().toString();
