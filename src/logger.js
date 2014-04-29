@@ -35,8 +35,11 @@ winston.addColors(Logger.colors);
 
 Logger.transports = {
 	console: function(options) {
-		return new winston.transports.Console({
-			timestamp: options.timestamps === 'verbose' ? true : function() {
+		var timestamp = false;
+		if (options.timestamps === 'verbose') {
+			timestamp = true;
+		} else if (options.timestamps === 'dev') {
+			timestamp = function() {
 				var date = new Date(),
 					ms = date.getMilliseconds().toString();
 				ms = ms + new Array((3 - ms.length + 1)).join('0');
@@ -45,7 +48,11 @@ Logger.transports = {
 						return value < 10 ? '0' + value : value;
 					})
 					.join(':') + '.' + ms;
-			},
+			};
+		}
+
+		return new winston.transports.Console({
+			timestamp: timestamp,
 			level: options.level,
 			colorize: true
 		});
