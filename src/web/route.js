@@ -9,10 +9,12 @@ function replaceValues(subject, values) {
 		} else {
 			//this comes from the express router
 			for (var name in values) {
-				subject = subject.replace(
-					new RegExp(':' + name + '\\b\\??', 'gi'),
-					values[name]
-				);
+				var replacement = values[name];
+				if (typeof(replacement) !== 'string') {
+					continue;
+				}
+
+				subject = subject.replace(new RegExp(':' + name + '\\b\\??', 'gi'), replacement);
 			}
 		}
 	}

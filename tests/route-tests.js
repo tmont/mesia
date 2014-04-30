@@ -45,4 +45,17 @@ describe('Route', function() {
 
 		url.should.equal('/foo/:foobar');
 	});
+
+	it('should handle non-toString-able values', function() {
+		var route = new Route('foo', '/:foo');
+		var url = route.getUrl({
+			foo: {
+				toString: function() {
+					throw new Error('NOPE.');
+				}
+			}
+		});
+
+		url.should.equal('/:foo');
+	});
 });
