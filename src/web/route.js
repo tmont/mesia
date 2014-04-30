@@ -10,7 +10,7 @@ function replaceValues(subject, values) {
 			//this comes from the express router
 			for (var name in values) {
 				var replacement = values[name];
-				if (typeof(replacement) !== 'string') {
+				if (typeof(replacement) !== 'string' && typeof(replacement) !== 'number') {
 					continue;
 				}
 

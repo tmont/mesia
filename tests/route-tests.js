@@ -12,6 +12,24 @@ describe('Route', function() {
 		url.should.equal('/asdf');
 	});
 
+	it('should replace value with number', function() {
+		var route = new Route('foo', '/:foo');
+		var url = route.getUrl({
+			foo: 1
+		});
+
+		url.should.equal('/1');
+	});
+
+	it('should not replace value with object', function() {
+		var route = new Route('foo', '/:foo');
+		var url = route.getUrl({
+			foo: {}
+		});
+
+		url.should.equal('/:foo');
+	});
+
 	it('should require exact match for optional parameters', function() {
 		var route = new Route('foo', '/:foobar?');
 		var url = route.getUrl({
