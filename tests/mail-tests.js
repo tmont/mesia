@@ -130,6 +130,19 @@ describe('Mail', function() {
 	});
 
 	describe('with templating', function() {
+		it('should generate templates in directory', function(done) {
+			var evaluator = new mail.EmailTemplateEvaluator(__dirname + '/mail/templates');
+			evaluator.init(function(err) {
+				should.not.exist(err);
+				evaluator.templates.should.have.property('another');
+				evaluator.templates.should.have.property('basic');
+
+				evaluator.templates.another.should.have.length(2);
+				evaluator.templates.basic.should.have.length(2);
+				done();
+			});
+		});
+
 		it('should generate body via template', function(done) {
 			var sendMail = 0;
 			var evaluator = new mail.EmailTemplateEvaluator(__dirname + '/mail/templates');
@@ -142,11 +155,13 @@ describe('Mail', function() {
 				message.should.have.property('text', 'howdy do? Foo Bar\n\nSigned,\nThis guy');
 
 				var expectedHtml = '<html>\n\
-	<body style="font-size: 16px; font-family: Consolas;">\n\
-		<p>howdy do?</p>\n\
-		<p class="red" style="color: red;">Your name is Foo Bar</p>\n\
-	</body>\n\
-</html>';
+<head>\n\n\
+</head>\n\
+<body style="font-size: 16px; font-family: Consolas;">\n\
+<p>howdy do?</p>\n\
+<p class="red" style="color: red;">Your name is Foo Bar</p>\n\
+</body>\n\
+</html>\n';
 				message.html.should.equal(expectedHtml);
 				callback();
 			};
