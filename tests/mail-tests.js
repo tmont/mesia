@@ -157,7 +157,7 @@ describe('Mail', function() {
 				var expectedHtml = '<html>\n\
 <head>\n\n\
 </head>\n\
-<body style="font-size: 16px; font-family: Consolas;">\n\
+<body style="font-family: Consolas; font-size: 16px;">\n\
 <p>howdy do?</p>\n\
 <p class="red" style="color: red;">Your name is Foo Bar</p>\n\
 </body>\n\
