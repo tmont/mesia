@@ -64,6 +64,10 @@ module.exports = function(container, libs, next) {
 
 		res.on('finish', function() {
 			log.trace('response finished - destructing');
+			if (!req.container) {
+				return;
+			}
+
 			destructors = destructors.map(function(destructor) {
 				return function(callback) {
 					destructor(req.container, callback);
