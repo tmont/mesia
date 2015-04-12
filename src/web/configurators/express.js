@@ -9,6 +9,7 @@ var stringUtils = require('../../utils'),
 module.exports = function(container, libs, next) {
 	var app = container.resolveSync('App'),
 		config = container.resolveSync('Config'),
+		options = container.resolveSync('ExpressOptions') || {},
 		log = container.resolveSync('Logger'),
 		routeLocals = container.resolveSync('RouteLocals');
 
@@ -80,7 +81,7 @@ module.exports = function(container, libs, next) {
 
 	//set up default middleware
 	app.use(cookieParser());
-	app.use(bodyParser());
+	app.use(bodyParser(options.bodyParser));
 	app.use(multipartParser());
 	app.use(expressSession({
 		secret: config.session.secret,
