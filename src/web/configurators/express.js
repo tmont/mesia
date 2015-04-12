@@ -9,7 +9,7 @@ var stringUtils = require('../../utils'),
 module.exports = function(container, libs, next) {
 	var app = container.resolveSync('App'),
 		config = container.resolveSync('Config'),
-		options = container.resolveSync('ExpressOptions') || {},
+		options = container.tryResolveSync('ExpressOptions') || {},
 		log = container.resolveSync('Logger'),
 		routeLocals = container.resolveSync('RouteLocals');
 
